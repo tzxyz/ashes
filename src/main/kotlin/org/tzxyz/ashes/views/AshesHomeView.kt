@@ -6,6 +6,7 @@ class AshesHomeView: AshesBaseView() {
 
     override val root = borderpane {
         top(AshesTopView::class)
+        bottom(AshesBottomView::class)
     }
 
 }
