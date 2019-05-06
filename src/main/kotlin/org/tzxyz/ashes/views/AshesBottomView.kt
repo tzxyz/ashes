@@ -27,8 +27,9 @@ class AshesBottomView: AshesBaseView() {
                     fontSize = 12.px
                     padding = box(5.px, 15.px, 5.px, 15.px)
                 }
-            }.action {
-                clicked.set(clicked.get().not())
+                action {
+                    clicked.set(clicked.get().not())
+                }
             }
         }
     }
