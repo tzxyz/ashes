@@ -1,5 +1,6 @@
 package org.tzxyz.ashes.controllers
 
+import org.tzxyz.ashes.events.AshesNewConnectionEvent
 import org.tzxyz.ashes.models.AshesConnection
 import org.tzxyz.ashes.utils.JsonUtils
 
@@ -15,6 +16,7 @@ class AshesConnectionController: AshesBaseController() {
             connections.add(connection)
             set("connections", JsonUtils.toJsonString(connections))
             save()
+            fire(AshesNewConnectionEvent(connection))
         }
     }
 
