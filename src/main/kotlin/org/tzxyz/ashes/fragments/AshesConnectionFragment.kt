@@ -1,22 +1,24 @@
-package org.tzxyz.ashes.views
+package org.tzxyz.ashes.fragments
 
-import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Pos
 import javafx.scene.layout.Priority
-import javafx.util.Duration
 import org.tzxyz.ashes.controllers.AshesConnectionController
 import org.tzxyz.ashes.viewmodels.AshesConnectionItemViewModel
 import tornadofx.*
 
-class AshesConnectionView: AshesBaseView() {
+class AshesConnectionFragment: AshesBaseFragment() {
 
     private val connectionController by inject<AshesConnectionController>()
-    
+
     private val connectionViewModel by inject<AshesConnectionItemViewModel>()
 
     override val root = form {
         title = "New Connection"
         fieldset {
+            field("Id") {
+                textfield(connectionViewModel.id)
+                hide()
+            }
             field("Name") {
                 textfield(connectionViewModel.name) {
                     required()
@@ -69,7 +71,7 @@ class AshesConnectionView: AshesBaseView() {
                     action {
                         connectionViewModel.commit {
                             connectionController.testConnection(connectionViewModel.item)
-                            openInternalWindow(AshesTestConnectionView::class, owner = this@form)
+//                            openInternalWindow(AshesTestConnectionView::class, owner = this@form)
                         }
                     }
                 }
@@ -91,23 +93,4 @@ class AshesConnectionView: AshesBaseView() {
             }
         }
     }
-}
-
-class AshesTestConnectionView: View() {
-
-    private val property = SimpleDoubleProperty(0.0)
-
-    override val root = stackpane {
-        vbox {
-            text("redis://localhost:6379")
-            progressbar {
-                progressProperty().animate(1.0, Duration(500.0))
-            }
-            button("Ok") .action {
-                property.set(0.0)
-                close()
-            }
-        }
-    }
-
 }

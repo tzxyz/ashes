@@ -5,9 +5,12 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView
 import javafx.geometry.Pos
 import javafx.scene.layout.Priority
+import org.tzxyz.ashes.fragments.AshesConnectionFragment
 import tornadofx.*
 
 class AshesTopView: AshesBaseView() {
+
+    private val new = JFXRippler(FontAwesomeIconView(FontAwesomeIcon.PLUS, "1.5em"), JFXRippler.RipplerPos.BACK)
 
     override val root = vbox {
         alignment = Pos.CENTER
@@ -30,7 +33,7 @@ class AshesTopView: AshesBaseView() {
                 style {
                     padding = box(10.px)
                 }
-                add(JFXRippler(FontAwesomeIconView(FontAwesomeIcon.PLUS, "1.5em"), JFXRippler.RipplerPos.BACK))
+                add(new)
             }
             stackpane {
                 style {
@@ -50,6 +53,12 @@ class AshesTopView: AshesBaseView() {
                 }
                 add(JFXRippler(FontAwesomeIconView(FontAwesomeIcon.CODE, "1.5em"), JFXRippler.RipplerPos.BACK))
             }
+        }
+    }
+
+    init {
+        new.setOnMouseClicked { _ ->
+            find<AshesConnectionFragment>().openModal()
         }
     }
 
