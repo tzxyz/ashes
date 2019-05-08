@@ -1,12 +1,16 @@
 package org.tzxyz.ashes.fragments
 
+import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Pos
 import javafx.scene.layout.Priority
+import javafx.util.Duration
 import org.tzxyz.ashes.controllers.AshesConnectionController
+import org.tzxyz.ashes.models.AshesConnection
 import org.tzxyz.ashes.viewmodels.AshesConnectionItemViewModel
 import tornadofx.*
 
-class AshesConnectionFragment: AshesBaseFragment() {
+class AshesNewConnectionFragment: AshesBaseFragment() {
 
     private val connectionController by inject<AshesConnectionController>()
 
@@ -70,8 +74,8 @@ class AshesConnectionFragment: AshesBaseFragment() {
                     spacing = 4.0
                     action {
                         connectionViewModel.commit {
-                            connectionController.testConnection(connectionViewModel.item)
-//                            openInternalWindow(AshesTestConnectionView::class, owner = this@form)
+                            // connectionController.testConnection(connectionViewModel.item)
+                            find<AshesTestConnectionFragment>(AshesTestConnectionFragment::connection to connectionViewModel.item).openModal()
                         }
                     }
                 }
@@ -94,3 +98,36 @@ class AshesConnectionFragment: AshesBaseFragment() {
         }
     }
 }
+
+class AshesTestConnectionFragment: AshesBaseFragment() {
+
+    private val property = SimpleDoubleProperty(0.0)
+
+    private val connectionController by inject<AshesConnectionController>()
+
+    private val success = SimpleBooleanProperty(false)
+
+    val connection by param<AshesConnection>()
+
+    override val root = stackpane {
+        vbox {
+            text("redis://%s:%s,%s".format(connection.host, connection.port, success))
+            progressbar {
+                progressProperty().animate(1.0, Duration(500.0))
+            }
+            button("Ok") .action {
+                property.set(0.0)
+                close()
+            }
+        }
+    }
+
+    init {
+        success.bind(SimpleBooleanProperty(connectionController.testConnection(connection)))
+    }
+}
+
+class AshesEditConnectionFragment: AshesBaseFragment() {
+    override val root = stackpane {  }
+}
+

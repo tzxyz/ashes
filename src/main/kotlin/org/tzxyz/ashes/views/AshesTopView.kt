@@ -5,7 +5,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView
 import javafx.geometry.Pos
 import javafx.scene.layout.Priority
-import org.tzxyz.ashes.fragments.AshesConnectionFragment
+import org.tzxyz.ashes.fragments.AshesNewConnectionFragment
 import tornadofx.*
 
 class AshesTopView: AshesBaseView() {
@@ -58,7 +58,7 @@ class AshesTopView: AshesBaseView() {
 
     init {
         new.setOnMouseClicked { _ ->
-            find<AshesConnectionFragment>().openModal()
+            find<AshesNewConnectionFragment>().openModal()
         }
     }
 
