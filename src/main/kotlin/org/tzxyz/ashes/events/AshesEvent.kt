@@ -6,6 +6,8 @@ import tornadofx.FXEvent
 
 class AshesNewConnectionEvent(val connection: AshesConnection): FXEvent(BackgroundThread)
 
+class AshesUpdateConnectionEvent(val before: AshesConnection, val connection: AshesConnection): FXEvent()
+
 class AshesScanKeyEvent(val connection: AshesConnection, val keys: List<String>): FXEvent()
 
 class AshesSendCommandEvent(val cmd: String): FXEvent(BackgroundThread)

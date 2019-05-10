@@ -128,6 +128,9 @@ class AshesTestConnectionFragment: AshesBaseFragment() {
 }
 
 class AshesEditConnectionFragment: AshesBaseFragment() {
+
+    val current by param<AshesConnection>()
+
     override val root = stackpane {  }
 }
 
