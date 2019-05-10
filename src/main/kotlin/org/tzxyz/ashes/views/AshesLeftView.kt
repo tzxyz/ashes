@@ -42,12 +42,6 @@ class AshesLeftView : View() {
                         }
                         Current.setConnection(it)
                     }
-                    subscribe<AshesUpdateConnectionEvent> { e ->
-                        println(e)
-                        if (e.before.id == it.id) {
-                            text = e.connection.name
-                        }
-                    }
                 }
                 is String -> {
                     text = it
@@ -68,6 +62,13 @@ class AshesLeftView : View() {
         }
         subscribe<AshesNewConnectionEvent> { e ->
             root.children.add(TreeItem<Any>(e.connection))
+        }
+        subscribe<AshesUpdateConnectionEvent> { e ->
+            root.children.forEach { item ->
+                if (e.before.id == (item.value as AshesConnection).id) {
+                    item.valueProperty().set(e.connection)
+                }
+            }
         }
         subscribe<AshesScanKeyEvent> { e ->
             runAsync {
