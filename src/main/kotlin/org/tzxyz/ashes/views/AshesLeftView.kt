@@ -43,6 +43,7 @@ class AshesLeftView : View() {
                         Current.setConnection(it)
                     }
                     subscribe<AshesUpdateConnectionEvent> { e ->
+                        println(e)
                         if (e.before.id == it.id) {
                             text = e.connection.name
                         }
