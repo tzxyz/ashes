@@ -10,7 +10,6 @@ import org.tzxyz.ashes.events.AshesOpenKeyViewEvent
 import org.tzxyz.ashes.events.AshesScanKeyEvent
 import org.tzxyz.ashes.events.AshesUpdateConnectionEvent
 import org.tzxyz.ashes.fragments.AshesEditConnectionFragment
-import org.tzxyz.ashes.fragments.AshesNewConnectionFragment
 import org.tzxyz.ashes.global.Current
 import org.tzxyz.ashes.models.AshesConnection
 import tornadofx.*
@@ -100,7 +99,7 @@ class AshesLeftView : View() {
         item("Edit Connection") {
             graphic = JFXRippler(MaterialDesignIconView(MaterialDesignIcon.TABLE_EDIT, "1.4em"))
             action {
-                find<AshesNewConnectionFragment>(AshesEditConnectionFragment::current to connection).openModal()
+                find<AshesEditConnectionFragment>(AshesEditConnectionFragment::current to connection).openModal()
             }
         }
         item("New Key")
