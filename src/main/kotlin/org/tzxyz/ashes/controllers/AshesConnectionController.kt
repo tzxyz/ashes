@@ -5,7 +5,9 @@ import org.tzxyz.ashes.events.AshesScanKeyEvent
 import org.tzxyz.ashes.events.AshesUpdateConnectionEvent
 import org.tzxyz.ashes.global.Current
 import org.tzxyz.ashes.models.AshesConnection
+import org.tzxyz.ashes.redis.AshesRedisClientFactory
 import org.tzxyz.ashes.utils.JsonUtils
+import redis.clients.jedis.ScanParams
 
 class AshesConnectionController: AshesBaseController() {
 
@@ -40,7 +42,7 @@ class AshesConnectionController: AshesBaseController() {
     }
 
     fun connect(connection: AshesConnection) {
-        val client = AshesRedisClient.getInstance(connection)
+        val client = AshesRedisClientFactory.get(connection)
         Current.setConnection(connection)
         runAsync {
             val keys = mutableListOf<String>()
