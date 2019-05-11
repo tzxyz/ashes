@@ -57,7 +57,7 @@ class AshesLeftView : View() {
             }
         }
         populate { parent ->
-            if (parent == root) connectionController.loadConnections()
+            if (parent == root) connectionController.load()
             else null
         }
         subscribe<AshesNewConnectionEvent> { e ->

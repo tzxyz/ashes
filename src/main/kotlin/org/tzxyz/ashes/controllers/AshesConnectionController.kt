@@ -11,11 +11,11 @@ import redis.clients.jedis.ScanParams
 
 class AshesConnectionController: AshesBaseController() {
 
-    fun loadConnections(): List<AshesConnection> {
+    fun load(): List<AshesConnection> {
         return JsonUtils.fromJsonString(config.string("connections", "[]"))
     }
 
-    fun saveConnection(connection: AshesConnection) {
+    fun save(connection: AshesConnection) {
         with(config) {
             val connections = JsonUtils.fromJsonString<List<AshesConnection>>(config.string("connections", "[]")).toMutableList()
             connections.add(connection)
@@ -25,7 +25,7 @@ class AshesConnectionController: AshesBaseController() {
         }
     }
 
-    fun updateConnection(before: AshesConnection, update: AshesConnection): AshesConnection {
+    fun update(before: AshesConnection, update: AshesConnection): AshesConnection {
         with(config) {
             val connections = JsonUtils.fromJsonString<List<AshesConnection>>(config.string("connections", "[]")).toMutableList()
             val index = connections.indexOf(before)
@@ -37,8 +37,13 @@ class AshesConnectionController: AshesBaseController() {
         return update
     }
 
-    fun testConnection(connection: AshesConnection): Boolean {
-        return true
+    fun test(connection: AshesConnection): List<Pair<String, String>> {
+        val client = AshesRedisClientFactory.get(connection)
+        if (connection.password == null) {
+            return listOf("CONNECT" to "OK", "PING" to client.ping(), "SELECT" to client.select(connection.db))
+        } else {
+            return listOf("CONNECT" to "OK", "PING" to client.ping(), "Auth" to client.auth(connection.password), "SELECT" to client.select(connection.db))
+        }
     }
 
     fun connect(connection: AshesConnection) {

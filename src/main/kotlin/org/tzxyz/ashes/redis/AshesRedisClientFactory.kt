@@ -21,6 +21,9 @@ class AshesRedisClientFactory {
                 if (connection.password != null) {
                     client.auth(connection.password)
                 }
+                if (connection.db != 0) {
+                    client.select(connection.db)
+                }
                 connections[connection] = client
             }
             return connections[connection]!!

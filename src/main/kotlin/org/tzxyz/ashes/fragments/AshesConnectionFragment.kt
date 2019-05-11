@@ -1,10 +1,11 @@
 package org.tzxyz.ashes.fragments
 
-import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.property.SimpleListProperty
 import javafx.geometry.Pos
+import javafx.scene.control.TableView
 import javafx.scene.layout.Priority
-import javafx.util.Duration
 import org.tzxyz.ashes.controllers.AshesConnectionController
 import org.tzxyz.ashes.models.AshesConnection
 import org.tzxyz.ashes.viewmodels.AshesEditConnectionItemViewModel
@@ -76,7 +77,7 @@ class AshesNewConnectionFragment: AshesBaseFragment() {
                     spacing = 4.0
                     action {
                         newConnectionViewModel.commit {
-                            // connectionController.testConnection(newConnectionViewModel.item)
+                            // connectionController.test(newConnectionViewModel.item)
                             find<AshesTestConnectionFragment>(AshesTestConnectionFragment::connection to newConnectionViewModel.item).openModal()
                         }
                     }
@@ -92,7 +93,7 @@ class AshesNewConnectionFragment: AshesBaseFragment() {
                         color = c("1296db"), size = 14
                 )).action {
                     newConnectionViewModel.commit {
-                        connectionController.saveConnection(newConnectionViewModel.item)
+                        connectionController.save(newConnectionViewModel.item)
                         newConnectionViewModel.rebind {
                             itemProperty.set(AshesConnection(id = UUID.randomUUID().toString(), name = "", host = ""))
                         }
@@ -174,7 +175,7 @@ class AshesEditConnectionFragment: AshesBaseFragment() {
                     spacing = 4.0
                     action {
                         editConnectionViewModel.commit {
-                            // connectionController.testConnection(editConnectionViewModel.item)
+                            // connectionController.test(editConnectionViewModel.item)
                             find<AshesTestConnectionFragment>(AshesTestConnectionFragment::connection to editConnectionViewModel.item).openModal()
                         }
                     }
@@ -190,7 +191,7 @@ class AshesEditConnectionFragment: AshesBaseFragment() {
                         color = c("1296db"), size = 14
                 )).action {
                     editConnectionViewModel.commit {
-                        connectionController.updateConnection(current, editConnectionViewModel.item)
+                        connectionController.update(current, editConnectionViewModel.item)
                     }
                     close()
                 }
@@ -205,25 +206,38 @@ class AshesTestConnectionFragment: AshesBaseFragment() {
 
     private val connectionController by inject<AshesConnectionController>()
 
-    private val success = SimpleBooleanProperty(false)
-
     val connection by param<AshesConnection>()
 
+    private val data = SimpleListProperty(connectionController.test(connection).observable())
+
     override val root = stackpane {
+        title = "Test Connection"
         vbox {
-            text("redis://%s:%s,%s".format(connection.host, connection.port, success))
-            progressbar {
-                progressProperty().animate(1.0, Duration(500.0))
+            spacing = 10.0
+            padding= insets(10, 0, 10, 0)
+            tableview(data) {
+                hgrow = Priority.ALWAYS
+                vgrow = Priority.ALWAYS
+                alignment = Pos.CENTER
+                columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
+                readonlyColumn("Command", Pair<String, String>::first) {
+                    isSortable = false
+                }
+                readonlyColumn("Status", Pair<String, String>::second) {
+                    isSortable = false
+                }
+                fixedCellSize = 30.0
+                prefHeightProperty().bind(Bindings.size(items).multiply(fixedCellSize).add(30.0))
             }
-            button("Ok") .action {
-                property.set(0.0)
-                close()
+            hbox {
+                alignment = Pos.BASELINE_RIGHT
+                padding = insets(10, 0)
+                button("Close") .action {
+                    property.set(0.0)
+                    close()
+                }
             }
         }
-    }
-
-    init {
-        success.bind(SimpleBooleanProperty(connectionController.testConnection(connection)))
     }
 }
 
