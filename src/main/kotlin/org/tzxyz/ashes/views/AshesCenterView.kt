@@ -30,7 +30,7 @@ class AshesCenterView : AshesBaseView() {
                     is AshesKeyAndSortedSetValue -> AshesSortedSetKeyView::class
                     else -> throw RuntimeException("Unknown Exception.")
                 }
-                val tab = tab(e.key, viewClass::class) {
+                val tab = tab(e.key) {
                     graphic = JFXRippler(MaterialDesignIconView(MaterialDesignIcon.CODE_STRING, "1.4em"))
                     contextMenu = contextmenu {
                         item("Close").action {
@@ -68,6 +68,8 @@ class AshesCenterView : AshesBaseView() {
                         item("Close All").action { tabs.removeAll { true } }
                     }
                 }
+//                add(viewClass)
+//                add(find(viewClass))
                 selectionModel.select(tab)
             }
         }

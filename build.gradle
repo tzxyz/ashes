@@ -32,6 +32,7 @@ dependencies {
     compile 'de.jensd:fontawesomefx-materialicons:2.2.0-5'
     compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+"
     compile group: 'redis.clients', name: 'jedis', version: '3.0.1'
+    compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.0'
     testCompile 'junit:junit:4.12'
 }
 
