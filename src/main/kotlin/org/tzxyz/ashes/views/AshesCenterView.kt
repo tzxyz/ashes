@@ -12,7 +12,7 @@ import tornadofx.*
 
 class AshesCenterView : AshesBaseView() {
 
-    private val ashesStringKeyController by inject<AshesKeyController>()
+    private val keyController by inject<AshesKeyController>()
 
     override val root = vbox {
         tabpane {
@@ -21,7 +21,7 @@ class AshesCenterView : AshesBaseView() {
             tabMaxWidth = 100.0
             tabMinWidth = 100.0
             subscribe<AshesOpenKeyViewEvent> { e ->
-                val keyValue = ashesStringKeyController.getKeyAndValue(e.key)
+                val keyValue = keyController.getKeyAndValue(e.key)
                 val viewClass = when(keyValue) {
                     is AshesKeyAndStringValue -> AshesStringKeyView::class
                     is AshesKeyAndHashValue -> AshesHashKeyView::class
