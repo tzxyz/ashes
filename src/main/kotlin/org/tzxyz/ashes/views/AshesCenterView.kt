@@ -67,9 +67,8 @@ class AshesCenterView : AshesBaseView() {
                         }
                         item("Close All").action { tabs.removeAll { true } }
                     }
+                    add(find(viewClass))
                 }
-//                add(viewClass)
-//                add(find(viewClass))
                 selectionModel.select(tab)
             }
         }

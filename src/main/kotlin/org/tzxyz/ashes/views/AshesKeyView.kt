@@ -3,6 +3,8 @@ package org.tzxyz.ashes.views
 import com.jfoenix.controls.JFXRippler
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.StringProperty
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.layout.Priority
@@ -10,6 +12,7 @@ import javafx.scene.text.Font
 import org.fxmisc.richtext.LineNumberFactory
 import org.fxmisc.richtext.StyleClassedTextArea
 import org.tzxyz.ashes.models.*
+import org.tzxyz.ashes.viewmodels.AshesKeyAndValueViewModel
 import tornadofx.*
 
 abstract class AshesBaseKeyView constructor(open val keyAndValue: AshesKeyAndValue): AshesBaseView() {
@@ -107,11 +110,20 @@ class AshesStringKeyView(override val keyAndValue: AshesKeyAndStringValue): Ashe
     }
 }
 
-class AshesListKeyView(override val keyAndValue: AshesKeyAndListValue): AshesBaseKeyView(keyAndValue) {
+class AshesListKeyView: View() {
 
-    override val root = buildView()
+//    private val viewmodel by inject<AshesKeyAndValueViewModel>()
 
-    override fun contentView() = vbox {
+//    val current by param<AshesKeyAndListValue>()
+//
+//    init {
+//        viewmodel.rebind { itemProperty.set(current) }
+//    }
+
+//    override val titleProperty = SimpleStringProperty("ashes")
+
+
+    override val root = vbox {
         text("ashes list")
         text("ashes list")
         text("ashes list")
