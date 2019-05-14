@@ -3,13 +3,21 @@ package org.tzxyz.ashes.views
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Pos
 import javafx.scene.layout.Priority
+import org.tzxyz.ashes.events.AshesSendCommandEvent
 import tornadofx.*
 
 class AshesBottomView: AshesBaseView() {
 
+    private val lock = Any()
+
     private val logPane = stackpane {
         id = "logPane"
-        textarea {}
+        textarea {
+            isEditable = false
+            subscribe<AshesSendCommandEvent> { e ->
+                synchronized(lock) { appendText(e.cmd) }
+            }
+        }
     }
 
     private val clicked = SimpleBooleanProperty(false)
