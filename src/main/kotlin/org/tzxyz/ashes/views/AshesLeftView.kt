@@ -104,6 +104,7 @@ class AshesLeftView : View() {
                 find<AshesEditConnectionFragment>(AshesEditConnectionFragment::current to connection).openModal()
             }
         }
+        item("Reload")
         item("New Key")
         item("Open Console")
         item("Server Info")

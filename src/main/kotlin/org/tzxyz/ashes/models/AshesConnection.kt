@@ -1,3 +1,5 @@
 package org.tzxyz.ashes.models
 
-data class AshesConnection(val id: String, val name: String, val host: String, val port: Int = 6379, val db: Int = 0, val password: String? = null)
+import java.util.*
+
+data class AshesConnection(val id: String = UUID.randomUUID().toString(), val name: String, val host: String, val port: Int = 6379, val db: Int = 0, val password: String? = null)

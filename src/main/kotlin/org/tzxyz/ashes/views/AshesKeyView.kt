@@ -3,8 +3,6 @@ package org.tzxyz.ashes.views
 import com.jfoenix.controls.JFXRippler
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView
-import javafx.beans.property.SimpleStringProperty
-import javafx.beans.property.StringProperty
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.layout.Priority
@@ -12,10 +10,9 @@ import javafx.scene.text.Font
 import org.fxmisc.richtext.LineNumberFactory
 import org.fxmisc.richtext.StyleClassedTextArea
 import org.tzxyz.ashes.models.*
-import org.tzxyz.ashes.viewmodels.AshesKeyAndValueViewModel
 import tornadofx.*
 
-abstract class AshesBaseKeyView constructor(open val keyAndValue: AshesKeyAndValue): AshesBaseView() {
+abstract class AshesBaseKeyView constructor(open val keyAndValue: AshesKeyValue): AshesBaseView() {
 
     private fun command(): StyleClassedTextArea {
         val command = StyleClassedTextArea()
@@ -99,7 +96,7 @@ abstract class AshesBaseKeyView constructor(open val keyAndValue: AshesKeyAndVal
     abstract fun contentView(): Parent
 }
 
-class AshesStringKeyView(override val keyAndValue: AshesKeyAndStringValue): AshesBaseKeyView(keyAndValue) {
+class AshesStringKeyView(override val keyAndValue: AshesKeyStringValue): AshesBaseKeyView(keyAndValue) {
 
     override val root = buildView()
 
@@ -110,27 +107,18 @@ class AshesStringKeyView(override val keyAndValue: AshesKeyAndStringValue): Ashe
     }
 }
 
-class AshesListKeyView: View() {
+class AshesListKeyView(override val keyAndValue: AshesKeyListValue): AshesBaseKeyView(keyAndValue) {
 
-//    private val viewmodel by inject<AshesKeyAndValueViewModel>()
+    override val root = buildView()
 
-//    val current by param<AshesKeyAndListValue>()
-//
-//    init {
-//        viewmodel.rebind { itemProperty.set(current) }
-//    }
-
-//    override val titleProperty = SimpleStringProperty("ashes")
-
-
-    override val root = vbox {
+    override fun contentView() = vbox {
         text("ashes list")
         text("ashes list")
         text("ashes list")
     }
 }
 
-class AshesHashKeyView(override val keyAndValue: AshesKeyAndHashValue): AshesBaseKeyView(keyAndValue) {
+class AshesHashKeyView(override val keyAndValue: AshesKeyHashValue): AshesBaseKeyView(keyAndValue) {
 
     override val root = buildView()
 
@@ -141,7 +129,7 @@ class AshesHashKeyView(override val keyAndValue: AshesKeyAndHashValue): AshesBas
     }
 }
 
-class AshesSetKeyView(override val keyAndValue: AshesKeyAndSetValue): AshesBaseKeyView(keyAndValue) {
+class AshesSetKeyView(override val keyAndValue: AshesKeySetValue): AshesBaseKeyView(keyAndValue) {
 
     override val root = buildView()
 
@@ -152,7 +140,7 @@ class AshesSetKeyView(override val keyAndValue: AshesKeyAndSetValue): AshesBaseK
     }
 }
 
-class AshesSortedSetKeyView(override val keyAndValue: AshesKeyAndSortedSetValue): AshesBaseKeyView(keyAndValue) {
+class AshesSortedSetKeyView(override val keyAndValue: AshesKeySortedSetValue): AshesBaseKeyView(keyAndValue) {
 
     override val root = buildView()
 

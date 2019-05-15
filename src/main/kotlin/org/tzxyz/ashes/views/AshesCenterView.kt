@@ -22,14 +22,6 @@ class AshesCenterView : AshesBaseView() {
             tabMinWidth = 100.0
             subscribe<AshesOpenKeyViewEvent> { e ->
                 val keyValue = keyController.getKeyAndValue(e.key)
-                val viewClass = when(keyValue) {
-                    is AshesKeyAndStringValue -> AshesStringKeyView::class
-                    is AshesKeyAndHashValue -> AshesHashKeyView::class
-                    is AshesKeyAndListValue -> AshesListKeyView::class
-                    is AshesKeyAndSetValue -> AshesSetKeyView::class
-                    is AshesKeyAndSortedSetValue -> AshesSortedSetKeyView::class
-                    else -> throw RuntimeException("Unknown Exception.")
-                }
                 val tab = tab(e.key) {
                     graphic = JFXRippler(MaterialDesignIconView(MaterialDesignIcon.CODE_STRING, "1.4em"))
                     contextMenu = contextmenu {
@@ -67,7 +59,14 @@ class AshesCenterView : AshesBaseView() {
                         }
                         item("Close All").action { tabs.removeAll { true } }
                     }
-                    add(find(viewClass))
+                    when(keyValue) {
+                        is AshesKeyStringValue -> add(AshesStringKeyView(keyValue))
+                        is AshesKeyHashValue -> add(AshesHashKeyView(keyValue))
+                        is AshesKeyListValue -> add(AshesListKeyView(keyValue))
+                        is AshesKeySetValue -> add(AshesSetKeyView(keyValue))
+                        is AshesKeySortedSetValue -> add(AshesSortedSetKeyView(keyValue))
+                        else -> throw RuntimeException("Unknown Exception.")
+                    }
                 }
                 selectionModel.select(tab)
             }
