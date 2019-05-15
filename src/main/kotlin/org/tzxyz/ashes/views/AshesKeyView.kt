@@ -7,9 +7,11 @@ import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.layout.Priority
 import javafx.scene.text.Font
+import org.fxmisc.richtext.CodeArea
 import org.fxmisc.richtext.LineNumberFactory
 import org.fxmisc.richtext.StyleClassedTextArea
 import org.tzxyz.ashes.models.*
+import org.tzxyz.ashes.viewmodels.AshesStringValueViewModel
 import tornadofx.*
 
 abstract class AshesBaseKeyView constructor(open val keyAndValue: AshesKeyValue): AshesBaseView() {
@@ -98,13 +100,31 @@ abstract class AshesBaseKeyView constructor(open val keyAndValue: AshesKeyValue)
 
 class AshesStringKeyView(override val keyAndValue: AshesKeyStringValue): AshesBaseKeyView(keyAndValue) {
 
+    private val viewModel = AshesStringValueViewModel()
+
+    init {
+        viewModel.rebind { itemProperty.set(keyAndValue) }
+    }
+
     override val root = buildView()
 
     override fun contentView() = vbox {
-        text("ashes string")
-        text("ashes string")
-        text("ashes string")
+        vgrow = Priority.ALWAYS
+        add(stringValueTextArea())
     }
+
+    private fun stringValueTextArea(): StyleClassedTextArea {
+        val valueTextArea = CodeArea()
+        valueTextArea.id = "string-value"
+        valueTextArea.replaceText(keyAndValue.value)
+        valueTextArea.isWrapText = true
+        valueTextArea.isEditable = true
+        valueTextArea.isWrapText = true
+        valueTextArea.vgrow = Priority.ALWAYS
+        valueTextArea.paragraphGraphicFactory = LineNumberFactory.get(valueTextArea)
+        return valueTextArea
+    }
+
 }
 
 class AshesListKeyView(override val keyAndValue: AshesKeyListValue): AshesBaseKeyView(keyAndValue) {
