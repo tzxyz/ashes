@@ -49,4 +49,9 @@ class AshesKeyController: AshesBaseController() {
             }
         }
     }
+
+    fun set(key: String, value: String): AshesKeyValue {
+        client().set(key, value)
+        return getKeyAndValue(key)
+    }
 }

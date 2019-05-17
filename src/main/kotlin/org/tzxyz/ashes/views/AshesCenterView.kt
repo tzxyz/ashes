@@ -60,7 +60,7 @@ class AshesCenterView : AshesBaseView() {
                         item("Close All").action { tabs.removeAll { true } }
                     }
                     when(keyValue) {
-                        is AshesKeyStringValue -> add(AshesStringKeyView(keyValue))
+                        is AshesKeyStringValue -> add(find(AshesStringKeyView::class, Scope(), AshesStringKeyView::key to keyValue.key))
                         is AshesKeyHashValue -> add(AshesHashKeyView(keyValue))
                         is AshesKeyListValue -> add(AshesListKeyView(keyValue))
                         is AshesKeySetValue -> add(AshesSetKeyView(keyValue))
