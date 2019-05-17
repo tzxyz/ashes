@@ -72,12 +72,12 @@ class AshesLeftView : View() {
         }
         subscribe<AshesScanKeyEvent> { e ->
             runAsync {
-                root.children.find { it.value.equals(e.connection) }.let { it ->
+                root.children.find { it.value.equals(e.connection) }.let {
                     if (!loadedConnections.containsKey(e.connection)) {
                         e.keys.forEach { key ->
                             it?.children?.add(TreeItem(key))
                         }
-                        loadedConnections.put(e.connection, true)
+                        loadedConnections[e.connection] = true
                         it?.expandAll()
                     }
                 }
