@@ -9,6 +9,9 @@ import javafx.scene.Parent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Priority
 import javafx.scene.text.Font
+import javafx.util.Duration
+import org.controlsfx.control.NotificationPane
+import org.controlsfx.control.Notifications
 import org.fxmisc.richtext.CodeArea
 import org.fxmisc.richtext.LineNumberFactory
 import org.fxmisc.richtext.StyleClassedTextArea
@@ -16,6 +19,8 @@ import org.tzxyz.ashes.controllers.AshesKeyController
 import org.tzxyz.ashes.models.*
 import org.tzxyz.ashes.viewmodels.AshesStringValueViewModel
 import tornadofx.*
+import tornadofx.controlsfx.customNotification
+import tornadofx.controlsfx.infoNotification
 
 abstract class AshesBaseKeyView constructor(open val keyAndValue: AshesKeyValue): AshesBaseView() {
 
@@ -196,6 +201,13 @@ class AshesStringKeyView: View() {
                 override fun handle(event: MouseEvent?) {
                     viewModel.commit {
                         viewModel.rebind { itemProperty.set(keyController.set(viewModel.key.value, viewModel.value.value) as AshesKeyStringValue) }
+                        customNotification(
+                            title = "Success",
+                            graphic = MaterialDesignIconView(MaterialDesignIcon.SCALE),
+                            text = "Update Value Success.",
+                            hideAfter = Duration.seconds(3.0),
+                            position = Pos.CENTER
+                        )
                     }
                 }
             })
