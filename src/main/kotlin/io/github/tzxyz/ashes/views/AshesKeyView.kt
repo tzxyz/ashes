@@ -10,9 +10,11 @@ import io.github.tzxyz.ashes.viewmodels.AshesStringValueViewModel
 import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Parent
+import javafx.scene.control.TableRow
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Priority
 import javafx.scene.text.Font
+import javafx.util.Callback
 import javafx.util.Duration
 import org.fxmisc.richtext.CodeArea
 import org.fxmisc.richtext.LineNumberFactory
@@ -341,6 +343,15 @@ class AshesListKeyView(override val keyAndValue: AshesKeyListValue): AshesBaseKe
             readonlyColumn("#", Pair<Int, String>::first)
             readonlyColumn("value", Pair<Int, String>::second)
             columnResizePolicy = SmartResize.POLICY
+            setRowFactory {
+                val row = TableRow<Pair<Int, String>>()
+                row.setOnMouseClicked { e ->
+                    if (e.clickCount == 2) {
+                        println(row.item)
+                    }
+                }
+                row
+            }
         }
     }
 }
