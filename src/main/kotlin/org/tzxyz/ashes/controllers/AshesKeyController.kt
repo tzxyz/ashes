@@ -3,6 +3,7 @@ package org.tzxyz.ashes.controllers
 import org.tzxyz.ashes.global.Current
 import org.tzxyz.ashes.models.*
 import org.tzxyz.ashes.redis.AshesRedisClientFactory
+import tornadofx.observable
 
 class AshesKeyController: AshesBaseController() {
 
@@ -23,7 +24,7 @@ class AshesKeyController: AshesBaseController() {
                 val length = client().llen(key)
                 val result = client().lrange(key, 0, length)
                 val cost = System.currentTimeMillis() - now
-                return AshesKeyListValue(key, type, ttl, cost, result)
+                return AshesKeyListValue(key, type, ttl, cost, result.observable())
             }
             "hash" -> {
                 val now = System.currentTimeMillis()

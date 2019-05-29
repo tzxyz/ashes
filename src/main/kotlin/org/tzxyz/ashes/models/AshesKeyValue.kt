@@ -1,5 +1,7 @@
 package org.tzxyz.ashes.models
 
+import javafx.collections.ObservableList
+
 open class AshesKeyValue(
     open val key: String,
     open val type: String,
@@ -26,7 +28,7 @@ class AshesKeyListValue(
         override val type: String,
         override val ttl: Long,
         override val cost: Long,
-        override val value: List<String>): AshesKeyValue(key, type, ttl, cost, value)
+        override val value: ObservableList<String>): AshesKeyValue(key, type, ttl, cost, value)
 
 
 class AshesKeySetValue(
