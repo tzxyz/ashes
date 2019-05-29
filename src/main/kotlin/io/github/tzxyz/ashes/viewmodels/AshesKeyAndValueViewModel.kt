@@ -17,6 +17,12 @@ class AshesListValueViewModel: ItemViewModel<AshesKeyListValue>() {
     val cost = bind(AshesKeyListValue::cost)
     val value = bind(AshesKeyListValue::value)
 }
-class AshesHashValueViewModel: ItemViewModel<AshesKeyHashValue>()
+class AshesHashValueViewModel: ItemViewModel<AshesKeyHashValue>() {
+    val key = bind(AshesKeyHashValue::key)
+    val type = bind(AshesKeyHashValue::type)
+    val ttl = bind(AshesKeyHashValue::ttl)
+    val cost = bind(AshesKeyHashValue::cost)
+    val value = bind(AshesKeyHashValue::value)
+}
 class AshesSetValueViewModel: ItemViewModel<AshesKeySetValue>()
 class AshesSortedSetValueViewModel: ItemViewModel<AshesKeySortedSetValue>()

@@ -361,9 +361,22 @@ class AshesHashKeyView(override val keyAndValue: AshesKeyHashValue): AshesBaseKe
     override val root = buildView()
 
     override fun contentView() = vbox {
-        text("ashes hash")
-        text("ashes hash")
-        text("ashes hash")
+        vgrow = Priority.ALWAYS
+        tableview(keyAndValue.value) {
+            vgrow = Priority.ALWAYS
+            readonlyColumn("key", Pair<String, String>::first)
+            readonlyColumn("value", Pair<String, String>::second)
+            columnResizePolicy = SmartResize.POLICY
+            setRowFactory {
+                val row = TableRow<Pair<String, String>>()
+                row.setOnMouseClicked { e ->
+                    if (e.clickCount == 2) {
+                        println(row.item)
+                    }
+                }
+                row
+            }
+        }
     }
 }
 

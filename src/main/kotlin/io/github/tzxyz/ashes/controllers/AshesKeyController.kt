@@ -30,7 +30,7 @@ class AshesKeyController: AshesBaseController() {
                 val now = System.currentTimeMillis()
                 val result = client().hgetAll(key).toList()
                 val cost = System.currentTimeMillis() - now
-                return AshesKeyHashValue(key, type, ttl, cost, result)
+                return AshesKeyHashValue(key, type, ttl, cost, result.observable())
             }
             "set" -> {
                 val now = System.currentTimeMillis()

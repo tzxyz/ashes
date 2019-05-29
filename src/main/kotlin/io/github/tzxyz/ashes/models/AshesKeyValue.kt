@@ -21,7 +21,7 @@ class AshesKeyHashValue(
         override val type: String,
         override val ttl: Long,
         override val cost: Long,
-        override val value: List<Pair<String, String>>): AshesKeyValue(key, type, ttl, cost, value)
+        override val value: ObservableList<Pair<String, String>>): AshesKeyValue(key, type, ttl, cost, value)
 
 class AshesKeyListValue(
         override val key: String,
