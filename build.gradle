@@ -1,4 +1,4 @@
-group 'org.tzxyz.ashes'
+group 'io.github.tzxyz.ashes'
 version '1.0-SNAPSHOT'
 
 buildscript {
