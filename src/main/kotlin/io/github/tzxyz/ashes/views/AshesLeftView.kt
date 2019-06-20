@@ -11,6 +11,8 @@ import io.github.tzxyz.ashes.events.AshesOpenKeyViewEvent
 import io.github.tzxyz.ashes.events.AshesScanKeyEvent
 import io.github.tzxyz.ashes.events.AshesUpdateConnectionEvent
 import io.github.tzxyz.ashes.fragments.AshesEditConnectionFragment
+import io.github.tzxyz.ashes.fragments.AshesNewConnectionFragment
+import io.github.tzxyz.ashes.fragments.AshesNewKeyFragment
 import io.github.tzxyz.ashes.global.Current
 import io.github.tzxyz.ashes.models.AshesConnection
 import tornadofx.*
@@ -106,7 +108,9 @@ class AshesLeftView : View() {
             }
         }
         item("Reload")
-        item("New Key")
+        item("New Key").action {
+            find<AshesNewKeyFragment>().openModal()
+        }
         item("Open Console")
         item("Server Info").action { fire(AshesOpenKeyViewEvent(KeyConstants.KEY_CONSTANTS_SERVER_INFO)) }
         item("Flush All")
