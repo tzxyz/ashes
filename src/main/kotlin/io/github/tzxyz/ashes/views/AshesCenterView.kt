@@ -3,10 +3,9 @@ package io.github.tzxyz.ashes.views
 import com.jfoenix.controls.JFXRippler
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView
-import io.github.tzxyz.ashes.constants.KeyConstants
+import io.github.tzxyz.ashes.constants.KEY_CONSTANTS_SERVER_INFO
 import io.github.tzxyz.ashes.controllers.AshesKeyController
 import io.github.tzxyz.ashes.events.AshesOpenKeyViewEvent
-import io.github.tzxyz.ashes.global.Current
 import io.github.tzxyz.ashes.models.*
 import javafx.scene.control.Tab
 import javafx.scene.layout.Priority
@@ -24,7 +23,7 @@ class AshesCenterView : AshesBaseView() {
             tabMinWidth = 100.0
             subscribe<AshesOpenKeyViewEvent> { e ->
                 when(e.key) {
-                    KeyConstants.KEY_CONSTANTS_SERVER_INFO -> {
+                    KEY_CONSTANTS_SERVER_INFO -> {
                         val tab = tab("ServerInfo") {
                             graphic = JFXRippler(MaterialDesignIconView(MaterialDesignIcon.INFORMATION, "1.4em"))
                             add(AshesServerInfoView(keyController.info()))

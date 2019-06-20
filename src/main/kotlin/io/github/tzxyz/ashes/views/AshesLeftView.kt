@@ -3,18 +3,17 @@ package io.github.tzxyz.ashes.views
 import com.jfoenix.controls.JFXRippler
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView
-import io.github.tzxyz.ashes.constants.KeyConstants
-import javafx.scene.control.TreeItem
+import io.github.tzxyz.ashes.constants.KEY_CONSTANTS_SERVER_INFO
 import io.github.tzxyz.ashes.controllers.AshesConnectionController
 import io.github.tzxyz.ashes.events.AshesNewConnectionEvent
 import io.github.tzxyz.ashes.events.AshesOpenKeyViewEvent
 import io.github.tzxyz.ashes.events.AshesScanKeyEvent
 import io.github.tzxyz.ashes.events.AshesUpdateConnectionEvent
 import io.github.tzxyz.ashes.fragments.AshesEditConnectionFragment
-import io.github.tzxyz.ashes.fragments.AshesNewConnectionFragment
 import io.github.tzxyz.ashes.fragments.AshesNewKeyFragment
 import io.github.tzxyz.ashes.global.Current
 import io.github.tzxyz.ashes.models.AshesConnection
+import javafx.scene.control.TreeItem
 import tornadofx.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -112,8 +111,8 @@ class AshesLeftView : View() {
             find<AshesNewKeyFragment>().openModal()
         }
         item("Open Console")
-        item("Server Info").action { fire(AshesOpenKeyViewEvent(KeyConstants.KEY_CONSTANTS_SERVER_INFO)) }
-        item("Flush All")
+        item("Server Info").action { fire(AshesOpenKeyViewEvent(KEY_CONSTANTS_SERVER_INFO)) }
+        item("Flush DB")
     }
 
 }
