@@ -24,7 +24,7 @@ repositories {
 
 dependencies {
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version'
-    compile 'no.tornado:tornadofx:1.7.17'
+    compile 'no.tornado:tornadofx:1.7.19'
     compile 'no.tornado:tornadofx-controlsfx:0.1'
     compile 'com.jfoenix:jfoenix:8.0.8'
     runtime group: 'de.jensd', name: 'fontawesomefx-commons', version: '8.15'
