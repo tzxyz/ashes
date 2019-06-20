@@ -3,6 +3,7 @@ package io.github.tzxyz.ashes.views
 import com.jfoenix.controls.JFXRippler
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView
+import io.github.tzxyz.ashes.constants.KeyConstants
 import javafx.scene.control.TreeItem
 import io.github.tzxyz.ashes.controllers.AshesConnectionController
 import io.github.tzxyz.ashes.events.AshesNewConnectionEvent
@@ -107,7 +108,7 @@ class AshesLeftView : View() {
         item("Reload")
         item("New Key")
         item("Open Console")
-        item("Server Info")
+        item("Server Info").action { fire(AshesOpenKeyViewEvent(KeyConstants.KEY_CONSTANTS_SERVER_INFO)) }
         item("Flush All")
     }
 
