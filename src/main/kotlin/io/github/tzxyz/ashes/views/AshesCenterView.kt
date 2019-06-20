@@ -6,6 +6,7 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView
 import io.github.tzxyz.ashes.constants.KeyConstants
 import io.github.tzxyz.ashes.controllers.AshesKeyController
 import io.github.tzxyz.ashes.events.AshesOpenKeyViewEvent
+import io.github.tzxyz.ashes.global.Current
 import io.github.tzxyz.ashes.models.*
 import javafx.scene.control.Tab
 import javafx.scene.layout.Priority
@@ -24,7 +25,10 @@ class AshesCenterView : AshesBaseView() {
             subscribe<AshesOpenKeyViewEvent> { e ->
                 when(e.key) {
                     KeyConstants.KEY_CONSTANTS_SERVER_INFO -> {
-                        val tab = tab("ServerInfo") {}
+                        val tab = tab("ServerInfo") {
+                            graphic = JFXRippler(MaterialDesignIconView(MaterialDesignIcon.INFORMATION, "1.4em"))
+                            add(AshesServerInfoView(keyController.info()))
+                        }
                         selectionModel.select(tab)
                     }
                     else -> {

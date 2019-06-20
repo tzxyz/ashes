@@ -55,4 +55,8 @@ class AshesKeyController: AshesBaseController() {
         client().set(key, value)
         return getKeyAndValue(key)
     }
+
+    fun info(): String {
+        return client().info()
+    }
 }
