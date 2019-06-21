@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXRippler
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView
 import io.github.tzxyz.ashes.constants.KEY_CONSTANTS_SERVER_INFO
+import io.github.tzxyz.ashes.constants.OPEN_CONSOLE_VIEW
 import io.github.tzxyz.ashes.controllers.AshesKeyController
 import io.github.tzxyz.ashes.events.AshesOpenKeyViewEvent
 import io.github.tzxyz.ashes.models.*
@@ -27,6 +28,13 @@ class AshesCenterView : AshesBaseView() {
                         val tab = tab("ServerInfo") {
                             graphic = JFXRippler(MaterialDesignIconView(MaterialDesignIcon.INFORMATION, "1.4em"))
                             add(AshesServerInfoView(keyController.info()))
+                        }
+                        selectionModel.select(tab)
+                    }
+                    OPEN_CONSOLE_VIEW -> {
+                        val tab = tab("Console") {
+                            graphic = JFXRippler(MaterialDesignIconView(MaterialDesignIcon.CONSOLE, "1.4em"))
+                            add(AshesConsoleView())
                         }
                         selectionModel.select(tab)
                     }

@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXRippler
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView
 import io.github.tzxyz.ashes.constants.KEY_CONSTANTS_SERVER_INFO
+import io.github.tzxyz.ashes.constants.OPEN_CONSOLE_VIEW
 import io.github.tzxyz.ashes.controllers.AshesConnectionController
 import io.github.tzxyz.ashes.events.AshesNewConnectionEvent
 import io.github.tzxyz.ashes.events.AshesOpenKeyViewEvent
@@ -110,7 +111,7 @@ class AshesLeftView : View() {
         item("New Key").action {
             find<AshesNewKeyFragment>().openModal()
         }
-        item("Open Console")
+        item("Open Console").action { fire(AshesOpenKeyViewEvent(OPEN_CONSOLE_VIEW)) }
         item("Server Info").action { fire(AshesOpenKeyViewEvent(KEY_CONSTANTS_SERVER_INFO)) }
         item("Flush DB").action {
             confirmation(
