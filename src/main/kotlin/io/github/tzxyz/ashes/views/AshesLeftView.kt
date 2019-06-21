@@ -112,7 +112,20 @@ class AshesLeftView : View() {
         }
         item("Open Console")
         item("Server Info").action { fire(AshesOpenKeyViewEvent(KEY_CONSTANTS_SERVER_INFO)) }
-        item("Flush DB")
+        item("Flush DB").action {
+            confirmation(
+                header = "Flush DB on redis://127.0.0.1:6379/1\r\nThis operation can't be undone.",
+                actionFn = { buttonType ->
+                    when(buttonType.text) {
+                        "OK" -> {
+                            // TODO FLUSH DB
+
+                        }
+                        else -> {}
+                    }
+                }
+            )
+        }
     }
 
 }
