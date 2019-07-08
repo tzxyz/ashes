@@ -5,12 +5,15 @@ import io.github.tzxyz.ashes.controllers.AshesKeyController
 import javafx.beans.property.SimpleListProperty
 import javafx.beans.property.SimpleSetProperty
 import javafx.beans.property.SimpleStringProperty
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import javafx.geometry.Pos
 import javafx.scene.control.ComboBox
 import javafx.scene.control.cell.TextFieldListCell
 import javafx.scene.layout.Priority
 import tornadofx.*
 import java.lang.RuntimeException
+import java.lang.UnsupportedOperationException
 
 class AshesNewKeyFragment: AshesBaseFragment() {
 
@@ -48,15 +51,41 @@ class AshesNewKeyFragment: AshesBaseFragment() {
                                 LIST -> {
                                     this@fieldset.children.add(2, field("Value : ") {
                                         id = "new-key-value-view"
-                                        val values = listOf("New Value Here.").asObservable()
-                                        listview(values) {
+                                        val values = FXCollections.observableArrayList<String>("New Value Here.")
+                                        newKey.listValue.value = values
+                                        listview(newKey.listValue) {
                                             isEditable = true
                                             cellFactory = TextFieldListCell.forListView()
                                         }
                                     })
                                 }
+                                SET -> {
+                                    this@fieldset.children.add(2, field("Value : ") {
+                                        id = "new-key-value-view"
+                                        val values = FXCollections.observableArrayList<String>("New Value Here.")
+                                        newKey.setValue.value = values
+                                        listview(newKey.setValue) {
+                                            isEditable = true
+                                            cellFactory = TextFieldListCell.forListView()
+                                        }
+                                    })
+                                }
+                                ZSET -> {
+                                    this@fieldset.children.add(2, field("Value : ") {
+                                        id = "new-key-value-view"
+                                        val values = FXCollections.observableArrayList<String>("New Value Here.")
+                                        newKey.setValue.value = values
+                                        listview(newKey.setValue) {
+                                            isEditable = true
+                                            cellFactory = TextFieldListCell.forListView()
+                                        }
+                                    })
+                                }
+                                HASH -> {
+                                    throw NotImplementedError("Unsupported Key Type.")
+                                }
                                 else -> {
-
+                                    throw UnsupportedOperationException("Unsupported Key Type.")
                                 }
                             }
                         }
@@ -85,9 +114,9 @@ class AshesNewKeyFragment: AshesBaseFragment() {
                         println(newKey)
                         when(newKey.type.value) {
                             STRING -> keyController.set(newKey.key.value, newKey.stringValue.value)
-                            LIST -> {}
-                            SET -> {}
-                            ZSET -> {}
+                            LIST -> keyController.lpush(newKey.key.value, newKey.listValue.value)
+                            SET -> keyController.sadd(newKey.key.value, newKey.setValue.value.toSet())
+                            ZSET -> keyController.zadd(newKey.key.value, newKey.setValue.value.toSet())
                             HASH -> {}
                             else -> throw RuntimeException("unknown redis key type")
                         }
@@ -104,7 +133,7 @@ class AshesNewKey {
     val type = SimpleStringProperty()
     val stringValue = SimpleStringProperty()
     val listValue = SimpleListProperty<String>()
-    val setValue = SimpleSetProperty<String>()
+    val setValue = SimpleListProperty<String>()
     val zsetValue = SimpleListProperty<Pair<Double, String>>()
     val hashValue = SimpleListProperty<Pair<String, String>>()
 }

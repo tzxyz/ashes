@@ -56,6 +56,18 @@ class AshesKeyController: AshesBaseController() {
         return getKeyAndValue(key)
     }
 
+    fun lpush(key: String, value: List<String>) {
+        client().lpush(key, *value.toTypedArray())
+    }
+
+    fun sadd(key: String, value: Set<String>) {
+        client().sadd(key, *value.toTypedArray())
+    }
+
+    fun zadd(key: String, value: Set<String>) {
+        //client().zadd(key, *value.toTypedArray())
+    }
+
     fun info(): String {
         return client().info()
     }
