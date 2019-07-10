@@ -6,11 +6,6 @@ import tornadofx.*
 
 class AshesApplication: App(AshesHomeView::class) {
 
-    init {
-        reloadStylesheetsOnFocus()
-        reloadViewsOnFocus()
-    }
-
     override fun createPrimaryScene(view: UIComponent): Scene {
         return Scene(view.root, 900.0, 600.0)
     }
