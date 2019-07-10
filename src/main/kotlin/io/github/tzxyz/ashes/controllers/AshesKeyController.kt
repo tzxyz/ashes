@@ -68,6 +68,10 @@ class AshesKeyController: AshesBaseController() {
         //client().zadd(key, *value.toTypedArray())
     }
 
+    fun hmset(key: String, value: Map<String, String>) {
+        client().hmset(key, value)
+    }
+
     fun info(): String {
         return client().info()
     }
