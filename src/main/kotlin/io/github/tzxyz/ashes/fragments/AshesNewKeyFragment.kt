@@ -3,17 +3,14 @@ package io.github.tzxyz.ashes.fragments
 import io.github.tzxyz.ashes.constants.*
 import io.github.tzxyz.ashes.controllers.AshesKeyController
 import javafx.beans.property.SimpleListProperty
-import javafx.beans.property.SimpleSetProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import javafx.geometry.Pos
-import javafx.scene.control.ComboBox
 import javafx.scene.control.cell.TextFieldListCell
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Priority
 import tornadofx.*
-import java.lang.RuntimeException
-import java.lang.UnsupportedOperationException
+
 
 class AshesNewKeyFragment: AshesBaseFragment() {
 
@@ -23,66 +20,90 @@ class AshesNewKeyFragment: AshesBaseFragment() {
 
     override val root = vbox {
         title = "New Key"
-        prefWidth = 600.0
-        prefHeight = 400.0
         form {
             vgrow = Priority.ALWAYS
-            fieldset {
-                vgrow = Priority.ALWAYS
-                field("Key : ") {
-                    textfield().bind(newKey.key)
-                }
-                field("Type : ") {
+            fieldset("Key:") {
+                field {
                     combobox(values = listOf(STRING, LIST, SET, ZSET, HASH)) {
                         id = "key-type"
                         hgrow = Priority.ALWAYS
                         bind(newKey.type)
                         selectionModel.selectFirst()
-                        valueProperty().addListener { observable, oldValue, newValue ->
+                        valueProperty().addListener { _, _, newValue ->
                             val node = this@form.lookup("#new-key-value-view")
+                            val container = this@form.lookup("#new-key-value-container")
                             this@fieldset.children.remove(node)
+                            container.getChildList()?.remove(node)
                             when(newValue) {
                                 STRING -> {
-                                    this@fieldset.children.add(2, field("Value : ") {
+                                    container.addChildIfPossible(field {
                                         id = "new-key-value-view"
-                                        textarea {  }
-                                    })
+                                        textarea {
+                                            prefHeight = 300.0
+                                        }.bind(newKey.stringValue)
+                                    }, 1)
                                 }
                                 LIST -> {
-                                    this@fieldset.children.add(2, field("Value : ") {
+                                    container.addChildIfPossible(field {
                                         id = "new-key-value-view"
-                                        val values = FXCollections.observableArrayList<String>("New Value Here.")
+                                        val values = FXCollections.observableArrayList<String>()
                                         newKey.listValue.value = values
-                                        listview(newKey.listValue) {
-                                            isEditable = true
-                                            cellFactory = TextFieldListCell.forListView()
+                                        tableview(newKey.listValue) {
+                                            prefHeight = 300.0
+                                            column("idx", String::class)
+                                            column("value", String::class) {
+
+                                            }
+                                            columnResizePolicy = SmartResize.POLICY
                                         }
-                                    })
+                                    }, 1)
                                 }
                                 SET -> {
-                                    this@fieldset.children.add(2, field("Value : ") {
+                                    container.addChildIfPossible(field {
                                         id = "new-key-value-view"
                                         val values = FXCollections.observableArrayList<String>("New Value Here.")
                                         newKey.setValue.value = values
                                         listview(newKey.setValue) {
                                             isEditable = true
+                                            prefHeight = 300.0
                                             cellFactory = TextFieldListCell.forListView()
                                         }
-                                    })
+                                    }, 1)
                                 }
                                 ZSET -> {
-                                    this@fieldset.children.add(2, field("Value : ") {
+                                    container.addChildIfPossible(field {
                                         id = "new-key-value-view"
                                         val values = FXCollections.observableArrayList<String>("New Value Here.")
                                         newKey.setValue.value = values
                                         listview(newKey.setValue) {
                                             isEditable = true
+                                            prefHeight = 300.0
                                             cellFactory = TextFieldListCell.forListView()
                                         }
-                                    })
+                                    }, 1)
                                 }
                                 HASH -> {
-                                    throw NotImplementedError("Unsupported Key Type.")
+                                    container.addChildIfPossible(field {
+                                        id = "new-key-value-view"
+                                        val values = FXCollections.observableArrayList<AshesNewHashValue>()
+                                        values.add(AshesNewHashValue("double click and new hash key here.", "double click and new hash value here."))
+                                        newKey.hashValue.set(values)
+                                        tableview(values) {
+                                            prefHeight = 300.0
+                                            column("key", AshesNewHashValue::key).makeEditable()
+                                            column("value", AshesNewHashValue::value).makeEditable()
+                                            columnResizePolicy = SmartResize.POLICY
+                                            addEventFilter(MouseEvent.MOUSE_CLICKED, { e ->
+                                                if (e.clickCount == 2) {
+                                                    val pos = getFocusModel().getFocusedCell()
+                                                    if (pos.row == items.size - 1) {
+                                                        val hashValue = AshesNewHashValue("double click and new hash key here.", "double click and new hash value here.")
+                                                        items.add(hashValue)
+                                                    }
+                                                }
+                                            })
+                                        }
+                                    }, 1)
                                 }
                                 else -> {
                                     throw UnsupportedOperationException("Unsupported Key Type.")
@@ -90,42 +111,40 @@ class AshesNewKeyFragment: AshesBaseFragment() {
                             }
                         }
                     }
+                    textfield().bind(newKey.key)
                 }
-                field("Value : ")  {
+            }
+            fieldset("Value:") {
+                id = "new-key-value-container"
+                field  {
                     id = "new-key-value-view"
-                    vgrow = Priority.ALWAYS
-                    val type = (this@form.lookup("#key-type") as ComboBox<String>).selectedItem
-                    when(type) {
-                        "string" -> {
-                            textarea {
-                                bind(newKey.stringValue)
-                            }
-                        }
-                        else -> {
-
-                        }
-                    }
+                    textarea {
+                        prefHeight = 300.0
+                    }.bind(newKey.stringValue)
                 }
-                hbox {
-                    alignment = Pos.BASELINE_RIGHT
-                    spacing = 20.0
-                    button("Cancel", SVGIcon(CANCEL_BUTTON, color = c("d81e06"), size = 14)).action{ close() }
-                    button("Save", SVGIcon(SAVE_BUTTON, color = c("1296db"), size = 14)).action {
-                        println(newKey)
-                        when(newKey.type.value) {
-                            STRING -> keyController.set(newKey.key.value, newKey.stringValue.value)
-                            LIST -> keyController.lpush(newKey.key.value, newKey.listValue.value)
-                            SET -> keyController.sadd(newKey.key.value, newKey.setValue.value.toSet())
-                            ZSET -> keyController.zadd(newKey.key.value, newKey.setValue.value.toSet())
-                            HASH -> {}
-                            else -> throw RuntimeException("unknown redis key type")
+                field {
+                    hbox {
+                        alignment = Pos.BASELINE_RIGHT
+                        spacing = 20.0
+                        button("Cancel", SVGIcon(CANCEL_BUTTON, color = c("d81e06"), size = 14)).action{ close() }
+                        button("Save", SVGIcon(SAVE_BUTTON, color = c("1296db"), size = 14)).action {
+                            println(newKey)
+                            when(newKey.type.value) {
+                                STRING -> keyController.set(newKey.key.value, newKey.stringValue.value)
+                                LIST -> keyController.lpush(newKey.key.value, newKey.listValue.value)
+                                SET -> keyController.sadd(newKey.key.value, newKey.setValue.value.toSet())
+                                ZSET -> keyController.zadd(newKey.key.value, newKey.setValue.value.toSet())
+                                HASH -> keyController.hmset(newKey.key.value, newKey.hashValue.value.map { it.key to it.value }.toMap())
+                                else -> throw RuntimeException("unknown redis key type")
+                            }
+                            close()
                         }
-                        close()
                     }
                 }
             }
         }
     }
+
 }
 
 class AshesNewKey {
@@ -135,5 +154,7 @@ class AshesNewKey {
     val listValue = SimpleListProperty<String>()
     val setValue = SimpleListProperty<String>()
     val zsetValue = SimpleListProperty<Pair<Double, String>>()
-    val hashValue = SimpleListProperty<Pair<String, String>>()
+    val hashValue = SimpleListProperty<AshesNewHashValue>()
 }
+
+data class AshesNewHashValue(var key: String, var value: String)
