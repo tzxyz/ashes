@@ -6,10 +6,7 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView
 import io.github.tzxyz.ashes.constants.KEY_CONSTANTS_SERVER_INFO
 import io.github.tzxyz.ashes.constants.OPEN_CONSOLE_VIEW
 import io.github.tzxyz.ashes.controllers.AshesConnectionController
-import io.github.tzxyz.ashes.events.AshesNewConnectionEvent
-import io.github.tzxyz.ashes.events.AshesOpenKeyViewEvent
-import io.github.tzxyz.ashes.events.AshesScanKeyEvent
-import io.github.tzxyz.ashes.events.AshesUpdateConnectionEvent
+import io.github.tzxyz.ashes.events.*
 import io.github.tzxyz.ashes.fragments.AshesEditConnectionFragment
 import io.github.tzxyz.ashes.fragments.AshesNewKeyFragment
 import io.github.tzxyz.ashes.global.Current
@@ -86,6 +83,15 @@ class AshesLeftView : View() {
                 }
             }
         }
+        subscribe<AshesReloadKeysEvent> { e ->
+            runAsync {
+                root.children.find { it.value.equals(e.connection) }.let {
+                    it?.children?.removeIf { true }
+                    connectionController.connect(e.connection)
+                    loadedConnections.remove(e.connection)
+                }
+            }
+        }
     }
 
     private fun connectionIcon(): JFXRippler {
@@ -107,7 +113,9 @@ class AshesLeftView : View() {
                 find<AshesEditConnectionFragment>(AshesEditConnectionFragment::current to connection).openModal()
             }
         }
-        item("Reload")
+        item("Reload").action {
+            fire(AshesReloadKeysEvent(connection))
+        }
         item("New Key").action {
             find<AshesNewKeyFragment>().openModal()
         }
