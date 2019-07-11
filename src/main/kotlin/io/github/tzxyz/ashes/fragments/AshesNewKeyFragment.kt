@@ -5,6 +5,7 @@ import io.github.tzxyz.ashes.controllers.AshesKeyController
 import javafx.beans.property.SimpleListProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
+import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.control.cell.TextFieldListCell
 import javafx.scene.input.MouseEvent
@@ -46,15 +47,22 @@ class AshesNewKeyFragment: AshesBaseFragment() {
                                 LIST -> {
                                     container.addChildIfPossible(field {
                                         id = "new-key-value-view"
-                                        val values = FXCollections.observableArrayList<String>()
+                                        val values = FXCollections.observableArrayList<AshesNewListValue>()
                                         newKey.listValue.value = values
                                         tableview(newKey.listValue) {
                                             prefHeight = 300.0
-                                            column("idx", String::class)
-                                            column("value", String::class) {
-
-                                            }
                                             columnResizePolicy = SmartResize.POLICY
+                                            column("idx", AshesNewListValue::idx)
+                                            column("value", AshesNewListValue::value)
+                                            addEventFilter(MouseEvent.MOUSE_CLICKED, EventHandler { e ->
+                                                if (e.clickCount == 2) {
+                                                    val pos = focusModel.focusedCell
+                                                    if (pos.row == items.size - 1) {
+                                                        val listValue = AshesNewListValue(1, "double click here.")
+                                                        items.add(listValue)
+                                                    }
+                                                }
+                                            })
                                         }
                                     }, 1)
                                 }
@@ -93,9 +101,9 @@ class AshesNewKeyFragment: AshesBaseFragment() {
                                             column("key", AshesNewHashValue::key).makeEditable()
                                             column("value", AshesNewHashValue::value).makeEditable()
                                             columnResizePolicy = SmartResize.POLICY
-                                            addEventFilter(MouseEvent.MOUSE_CLICKED, { e ->
+                                            addEventFilter(MouseEvent.MOUSE_CLICKED, EventHandler { e ->
                                                 if (e.clickCount == 2) {
-                                                    val pos = getFocusModel().getFocusedCell()
+                                                    val pos = focusModel.focusedCell
                                                     if (pos.row == items.size - 1) {
                                                         val hashValue = AshesNewHashValue("double click and new hash key here.", "double click and new hash value here.")
                                                         items.add(hashValue)
@@ -128,10 +136,9 @@ class AshesNewKeyFragment: AshesBaseFragment() {
                         spacing = 20.0
                         button("Cancel", SVGIcon(CANCEL_BUTTON, color = c("d81e06"), size = 14)).action{ close() }
                         button("Save", SVGIcon(SAVE_BUTTON, color = c("1296db"), size = 14)).action {
-                            println(newKey)
                             when(newKey.type.value) {
                                 STRING -> keyController.set(newKey.key.value, newKey.stringValue.value)
-                                LIST -> keyController.lpush(newKey.key.value, newKey.listValue.value)
+                                LIST -> keyController.lpush(newKey.key.value, newKey.listValue.value.map { it.value })
                                 SET -> keyController.sadd(newKey.key.value, newKey.setValue.value.toSet())
                                 ZSET -> keyController.zadd(newKey.key.value, newKey.setValue.value.toSet())
                                 HASH -> keyController.hmset(newKey.key.value, newKey.hashValue.value.map { it.key to it.value }.toMap())
@@ -151,10 +158,11 @@ class AshesNewKey {
     val key = SimpleStringProperty()
     val type = SimpleStringProperty()
     val stringValue = SimpleStringProperty()
-    val listValue = SimpleListProperty<String>()
+    val listValue = SimpleListProperty<AshesNewListValue>()
     val setValue = SimpleListProperty<String>()
     val zsetValue = SimpleListProperty<Pair<Double, String>>()
     val hashValue = SimpleListProperty<AshesNewHashValue>()
 }
 
+data class AshesNewListValue(var idx: Int, var value: String)
 data class AshesNewHashValue(var key: String, var value: String)

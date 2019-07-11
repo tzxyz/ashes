@@ -72,6 +72,10 @@ class AshesKeyController: AshesBaseController() {
         client().hmset(key, value)
     }
 
+    fun flushDB() {
+        client().flushDB()
+    }
+
     fun info(): String {
         return client().info()
     }
