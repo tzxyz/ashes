@@ -20,6 +20,9 @@ class AshesConsoleView: AshesBaseView() {
         console.appendText("redis:> ")
         console.setOnKeyPressed { e ->
             if (e.code == KeyCode.ENTER && !e.isShiftDown) {
+                val text = console.text.replace("redis:> ", "")
+                val line = text.split("\n").findLast { it != "" }.orEmpty()
+                println(line)
                 console.appendText("redis:> ")
             }
         }
