@@ -14,7 +14,6 @@ import javafx.scene.control.TableRow
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Priority
 import javafx.scene.text.Font
-import javafx.util.Callback
 import javafx.util.Duration
 import org.fxmisc.richtext.CodeArea
 import org.fxmisc.richtext.LineNumberFactory
@@ -106,90 +105,6 @@ abstract class AshesBaseKeyView constructor(open val keyAndValue: AshesKeyValue)
     abstract fun contentView(): Parent
 }
 
-abstract class AshesBaseKeyView2: AshesBaseView() {
-
-    private fun command(): StyleClassedTextArea {
-        val command = StyleClassedTextArea()
-        command.paragraphGraphicFactory = LineNumberFactory.get(command)
-        command.isWrapText = true
-        command.minHeight = 100.0
-        command.maxHeight = 100.0
-        return command
-    }
-
-    fun buildView(keyAndValue: AshesKeyValue) = vbox {
-        vgrow = Priority.ALWAYS
-        hbox {
-            spacing = 8.0
-
-            style {
-                padding = box(2.px, 5.px, 5.px, 2.px)
-            }
-
-            hbox {
-                spacing = 2.0
-                add(JFXRippler(MaterialDesignIconView(MaterialDesignIcon.CAST_CONNECTED, "1.6em")))
-                text {
-                    text = "(%s:%s)".format("127.0.0.1", "6379")
-                    alignment = Pos.CENTER
-                    font = Font.font(12.0)
-                }
-            }
-
-            hbox {
-                spacing = 2.0
-                add(JFXRippler(MaterialDesignIconView(MaterialDesignIcon.DATABASE, "1.6em")))
-                text {
-                    text = "%s".format("0")
-                    alignment = Pos.CENTER
-                    font = Font.font(12.0)
-                }
-            }
-
-            hbox {
-                spacing = 2.0
-                add(JFXRippler(MaterialDesignIconView(MaterialDesignIcon.TIMER_SAND, "1.5em")))
-                text {
-                    text = "%ss".format(keyAndValue.ttl)
-                    alignment = Pos.CENTER
-                    font = Font.font(12.0)
-                }
-            }
-        }
-        add(command())
-        hbox {
-            spacing = 8.0
-            padding = insets(5.0)
-            hbox {
-                spacing = 2.0
-                add(JFXRippler(MaterialDesignIconView(MaterialDesignIcon.CODE_STRING, "1.4em")))
-                text {
-                    text = "%s".format(keyAndValue.key)
-                    font = Font.font(12.0)
-                    alignment = Pos.CENTER
-                }
-            }
-            hbox {
-                spacing = 2.0
-                add(JFXRippler(MaterialDesignIconView(MaterialDesignIcon.TIMER, "1.4em")))
-                text {
-                    System.currentTimeMillis()
-                    text = "%s millisecond".format(keyAndValue.cost)
-                    font = Font.font(12.0)
-                    alignment = Pos.CENTER
-                }
-            }
-            region { hgrow = Priority.ALWAYS }
-            add(JFXRippler(MaterialDesignIconView(MaterialDesignIcon.FILE_TREE, "1.4em")))
-            add(JFXRippler(MaterialDesignIconView(MaterialDesignIcon.TABLE, "1.4em")))
-            add(JFXRippler(MaterialDesignIconView(MaterialDesignIcon.FILE_DOCUMENT, "1.4em")))
-        }
-        add(contentView())
-    }
-
-    abstract fun contentView(): Parent
-}
-
 class AshesStringKeyView: AshesBaseView() {
 
     private val keyController by inject<AshesKeyController>()
@@ -201,7 +116,6 @@ class AshesStringKeyView: AshesBaseView() {
     var keyAndValue: AshesKeyStringValue
 
     init {
-        println(key)
         keyAndValue = keyController.getKeyAndValue(key) as AshesKeyStringValue
         viewModel.rebind { itemProperty.set(keyAndValue) }
     }
@@ -302,7 +216,7 @@ class AshesStringKeyView: AshesBaseView() {
 
     override val root = buildView()
 
-    fun contentView() = vbox {
+    private fun contentView() = vbox {
         vgrow = Priority.ALWAYS
         add(stringValueTextArea())
     }
