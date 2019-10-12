@@ -12,6 +12,7 @@ import io.github.tzxyz.ashes.fragments.AshesEditConnectionFragment
 import io.github.tzxyz.ashes.fragments.AshesNewKeyFragment
 import io.github.tzxyz.ashes.global.Current
 import io.github.tzxyz.ashes.models.AshesConnection
+import io.github.tzxyz.ashes.utils.DragResizer
 import javafx.scene.control.TreeItem
 import tornadofx.*
 import java.util.concurrent.ConcurrentHashMap
@@ -134,6 +135,10 @@ class AshesLeftView : View() {
                 }
             )
         }
+    }
+
+    init {
+        DragResizer.makeResizable(this.root)
     }
 
 }
