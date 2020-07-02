@@ -2,7 +2,7 @@ group 'io.github.tzxyz.ashes'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.3.20'
+    ext.kotlin_version = '1.3.21'
 
     repositories {
         mavenCentral()
@@ -31,7 +31,7 @@ dependencies {
     compile group: 'de.jensd', name: 'fontawesomefx-fontawesome', version: '4.7.0-5'
     compile 'de.jensd:fontawesomefx-materialdesignfont:1.7.22-4'
     compile 'de.jensd:fontawesomefx-materialicons:2.2.0-5'
-    compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+"
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.11.1'
     compile group: 'redis.clients', name: 'jedis', version: '3.0.1'
     compile group: 'io.lettuce', name: 'lettuce-core', version: '5.2.1.RELEASE'
     compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.0'
@@ -39,8 +39,12 @@ dependencies {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
