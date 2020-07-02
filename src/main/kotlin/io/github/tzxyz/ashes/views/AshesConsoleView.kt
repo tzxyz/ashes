@@ -1,5 +1,7 @@
 package io.github.tzxyz.ashes.views
 
+import io.github.tzxyz.ashes.redis.AshesRedisRawCommand
+import io.github.tzxyz.ashes.services.AshesConsoleService
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.Priority
@@ -9,6 +11,8 @@ import tornadofx.vbox
 import tornadofx.vgrow
 
 class AshesConsoleView: AshesBaseView() {
+
+    private val consoleService by inject<AshesConsoleService>()
 
     override val root = vbox {
         add(console())
@@ -24,8 +28,12 @@ class AshesConsoleView: AshesBaseView() {
             if (e.code == KeyCode.ENTER && !e.isShiftDown) {
                 val text = console.text.replace("redis:> ", "")
                 val line = text.split("\n").findLast { it != "" }.orEmpty()
-                println(line)
+                val result = consoleService.execute(AshesRedisRawCommand(line))
+                if (result.isNotBlank()) {
+                    console.appendText("$result\n")
+                }
                 console.appendText("redis:> ")
+
             }
             if (e.code == KeyCode.BACK_SPACE && console.text.endsWith("redis:> ")) {
                 e.consume()
