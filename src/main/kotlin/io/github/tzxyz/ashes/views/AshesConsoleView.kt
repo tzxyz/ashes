@@ -1,8 +1,7 @@
 package io.github.tzxyz.ashes.views
 
-import io.github.tzxyz.ashes.global.Current
-import io.github.tzxyz.ashes.redis.AshesRedisClientFactory
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.scene.layout.Priority
 import org.fxmisc.richtext.LineNumberFactory
 import org.fxmisc.richtext.StyleClassedTextArea
@@ -10,8 +9,6 @@ import tornadofx.vbox
 import tornadofx.vgrow
 
 class AshesConsoleView: AshesBaseView() {
-
-    private val client = AshesRedisClientFactory.get(Current.getConnection())
 
     override val root = vbox {
         add(console())
@@ -27,12 +24,23 @@ class AshesConsoleView: AshesBaseView() {
             if (e.code == KeyCode.ENTER && !e.isShiftDown) {
                 val text = console.text.replace("redis:> ", "")
                 val line = text.split("\n").findLast { it != "" }.orEmpty()
-                val (command, args) = line.split(" ")
-                println(command)
-                println(args)
+                println(line)
                 console.appendText("redis:> ")
             }
+            if (e.code == KeyCode.BACK_SPACE && console.text.endsWith("redis:> ")) {
+                e.consume()
+            }
+            if (e.code == KeyCode.L && e.isControlDown) {
+                console.replaceText("redis:> ")
+            }
         }
+        console.addEventFilter(KeyEvent.KEY_PRESSED, { e ->
+            if (e.code == KeyCode.BACK_SPACE && console.text.endsWith("redis:> ")) {
+                e.consume()
+            }
+        })
+
         return console
     }
+
 }
