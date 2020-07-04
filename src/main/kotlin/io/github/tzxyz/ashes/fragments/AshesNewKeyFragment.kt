@@ -7,10 +7,17 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.event.EventHandler
 import javafx.geometry.Pos
+import javafx.scene.Parent
+import javafx.scene.control.Button
+import javafx.scene.control.TableView
+import javafx.scene.control.TextField
 import javafx.scene.control.cell.TextFieldListCell
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
+import javafx.scene.layout.VBox
 import tornadofx.*
+import java.util.concurrent.atomic.AtomicInteger
 
 
 class AshesNewKeyFragment: AshesBaseFragment() {
@@ -21,6 +28,7 @@ class AshesNewKeyFragment: AshesBaseFragment() {
 
     override val root = vbox {
         title = "New Key"
+        val context = ValidationContext()
         form {
             vgrow = Priority.ALWAYS
             fieldset("Key:") {
@@ -41,7 +49,11 @@ class AshesNewKeyFragment: AshesBaseFragment() {
                                         id = "new-key-value-view"
                                         textarea {
                                             prefHeight = 300.0
-                                        }.bind(newKey.stringValue)
+                                            bind(newKey.stringValue)
+                                            context.addValidator(this, this.textProperty()) {
+                                                if (it.isNullOrBlank()) error("The value is required.") else null
+                                            }
+                                        }
                                     }, 1)
                                 }
                                 LIST -> {
@@ -49,22 +61,48 @@ class AshesNewKeyFragment: AshesBaseFragment() {
                                         id = "new-key-value-view"
                                         val values = FXCollections.observableArrayList<AshesNewListValue>()
                                         newKey.listValue.value = values
-                                        tableview(newKey.listValue) {
-                                            prefHeight = 300.0
-                                            columnResizePolicy = SmartResize.POLICY
-                                            column("idx", AshesNewListValue::idx)
-                                            column("value", AshesNewListValue::value)
-                                            addEventFilter(MouseEvent.MOUSE_CLICKED, EventHandler { e ->
-                                                if (e.clickCount == 2) {
-                                                    val pos = focusModel.focusedCell
-                                                    if (pos.row == items.size - 1) {
-                                                        val listValue = AshesNewListValue(1, "double click here.")
-                                                        items.add(listValue)
-                                                    }
+                                        vbox {
+                                            hbox {
+                                                button("+").action {
+                                                    (this@vbox.lookup("#listTableView") as TableView<AshesNewListValue>).items.add(AshesNewListValue(1, "double click here.", false))
                                                 }
-                                            })
+                                                button("-")
+
+                                            }
+                                            tableview(newKey.listValue) {
+                                                id = "listTableView"
+                                                prefHeight = 300.0
+                                                columnResizePolicy = SmartResize.POLICY
+//                                            column("idx", AshesNewListValue::idx)
+                                                column("value", AshesNewListValue::value)
+                                                column("operator", AshesNewListValue::op).cellFormat {
+//                                                    button("+").action { items.add(AshesNewListValue(1, "double click here.", false)) }
+                                                    graphic = hbox(spacing = 5) {
+                                                        button("-").action { items.remove(this@cellFormat.rowItem) }
+                                                    }
+//
+                                                }
+//                                                addEventFilter(MouseEvent.MOUSE_CLICKED, EventHandler { e ->
+//                                                    if (e.clickCount == 2) {
+//                                                        val pos = focusModel.focusedCell
+//                                                        if (pos.row == items.size - 1) {
+//                                                            val listValue = AshesNewListValue(1, "double click here.", false)
+//                                                            items.add(listValue)
+//                                                        }
+//                                                    }
+//                                                })
+                                                context.addValidator(this, this.itemsProperty()) {
+                                                    if (it.isNullOrEmpty()) error("The value is required.")
+                                                    else null
+                                                }
+                                            }
                                         }
+
                                     }, 1)
+//                                    container.addChildIfPossible(field {
+//                                        id = "new-key-value-view"
+//                                        add(AshesListKeyContainer(newKey.listValue))
+//                                    }, 1)
                                 }
                                 SET -> {
                                     container.addChildIfPossible(field {
@@ -119,7 +157,12 @@ class AshesNewKeyFragment: AshesBaseFragment() {
                             }
                         }
                     }
-                    textfield().bind(newKey.key)
+                    textfield {
+                        bind(newKey.key)
+                        context.addValidator(this, this.textProperty()) {
+                            if (it.isNullOrBlank()) error("The Key is required.") else null
+                        }
+                    }
                 }
             }
             fieldset("Value:") {
@@ -136,6 +179,9 @@ class AshesNewKeyFragment: AshesBaseFragment() {
                         spacing = 20.0
                         button("Cancel", SVGIcon(CANCEL_BUTTON, color = c("d81e06"), size = 14)).action{ close() }
                         button("Save", SVGIcon(SAVE_BUTTON, color = c("1296db"), size = 14)).action {
+                            context.validators.forEach {
+                                if (!it.validate()) return@action
+                            }
                             when(newKey.type.value) {
                                 STRING -> keyController.set(newKey.key.value, newKey.stringValue.value)
                                 LIST -> keyController.lpush(newKey.key.value, newKey.listValue.value.map { it.value })
@@ -164,5 +210,24 @@ class AshesNewKey {
     val hashValue = SimpleListProperty<AshesNewHashValue>()
 }
 
-data class AshesNewListValue(var idx: Int, var value: String)
+class AshesListKeyContainer(val list: SimpleListProperty<AshesNewListValue>): VBox() {
+    init {
+        children.addAll(AshesListKeyForm(this))
+    }
+}
+class AshesListKeyForm(parent: Parent): HBox() {
+    private val counter = AtomicInteger()
+    private val textField = TextField("item")
+    private val plusButton = Button("+")
+    private val removeButton = Button("-")
+
+    init {
+        hgrow = Priority.ALWAYS
+        this.children.addAll(textField, plusButton, removeButton)
+        plusButton.action { parent.getChildList()?.add(AshesListKeyForm(parent)) }
+        removeButton.action { parent.getChildList()?.let { if (it.size > 1) { it.remove(this) } } }
+    }
+}
+
+data class AshesNewListValue(var idx: Int, var value: String, var op: Boolean)
 data class AshesNewHashValue(var key: String, var value: String)
