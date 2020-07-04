@@ -56,8 +56,8 @@ class AshesKeyController: AshesBaseController() {
         return getKeyAndValue(key)
     }
 
-    fun lpush(key: String, value: List<String>) {
-        client().lpush(key, *value.toTypedArray())
+    fun rpush(key: String, value: List<String>) {
+        client().rpush(key, *value.toTypedArray())
     }
 
     fun sadd(key: String, value: Set<String>) {
