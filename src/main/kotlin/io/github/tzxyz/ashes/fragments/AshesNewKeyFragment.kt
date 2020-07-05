@@ -5,11 +5,9 @@ import io.github.tzxyz.ashes.controllers.AshesKeyController
 import javafx.beans.property.SimpleListProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
-import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.control.TableView
 import javafx.scene.control.cell.TextFieldListCell
-import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Priority
 import tornadofx.*
 
@@ -155,24 +153,45 @@ class AshesNewKeyFragment: AshesBaseFragment() {
                                     container.addChildIfPossible(field {
                                         id = "new-key-value-view"
                                         val values = FXCollections.observableArrayList<AshesNewHashValue>()
-                                        values.add(AshesNewHashValue("double click and new hash key here.", "double click and new hash value here."))
                                         newKey.hashValue.set(values)
                                         tableview(values) {
+                                            id = "hashTableView"
                                             prefHeight = 300.0
                                             column("key", AshesNewHashValue::key).makeEditable()
                                             column("value", AshesNewHashValue::value).makeEditable()
                                             columnResizePolicy = SmartResize.POLICY
-                                            addEventFilter(MouseEvent.MOUSE_CLICKED, EventHandler { e ->
-                                                if (e.clickCount == 2) {
-                                                    val pos = focusModel.focusedCell
-                                                    if (pos.row == items.size - 1) {
-                                                        val hashValue = AshesNewHashValue("double click and new hash key here.", "double click and new hash value here.")
-                                                        items.add(hashValue)
-                                                    }
-                                                }
-                                            })
+                                            context.addValidator(this, this.itemsProperty()) {
+                                                if (it.isNullOrEmpty()) error("The value is required.")
+                                                else null
+                                            }
                                         }
                                     }, 1)
+                                    container.addChildIfPossible(field {
+                                        id = "new-key-value-operator-bar"
+                                        hbox {
+                                            alignment = Pos.BASELINE_RIGHT
+                                            spacing = 12.0
+                                            button("Add Item", svgicon(ADD_BUTTON, color = c("1296db"), size = 14)).action {
+                                                val hashTableView = (this@vbox.lookup("#hashTableView") as TableView<AshesNewHashValue>)
+                                                val row = hashTableView.items.size
+                                                hashTableView.items.add(AshesNewHashValue("", ""))
+                                                hashTableView.layout()
+                                                hashTableView.edit(row, hashTableView.columns[0])
+                                            }
+                                            button("Remove Item", SVGIcon(CANCEL_BUTTON, color = c("d81e06"), size = 14)).action {
+                                                val listTableView = (this@vbox.lookup("#hashTableView") as TableView<AshesNewHashValue>)
+                                                listTableView.selectedItem?.let { listTableView.items.remove(it) }
+                                            }
+                                            button("Cancel", SVGIcon(CANCEL_BUTTON, color = c("d81e06"), size = 14)).action{ close() }
+                                            button("Save", SVGIcon(SAVE_BUTTON, color = c("1296db"), size = 14)).action {
+                                                context.validators.forEach {
+                                                    if (!it.validate()) return@action
+                                                }
+                                                keyController.hmset(newKey.key.value, newKey.hashValue.value.map { it.key to it.value }.toMap())
+                                                close()
+                                            }
+                                        }
+                                    }, 2)
                                 }
                                 else -> {
                                     throw UnsupportedOperationException("Unsupported Key Type.")
