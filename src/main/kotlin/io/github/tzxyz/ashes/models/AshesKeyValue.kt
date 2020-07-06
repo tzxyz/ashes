@@ -36,11 +36,11 @@ class AshesKeySetValue(
         override val type: String,
         override val ttl: Long,
         override val cost: Long,
-        override val value: List<Pair<Int, String>>): AshesKeyValue(key, type, ttl, cost, value)
+        override val value: ObservableList<String>): AshesKeyValue(key, type, ttl, cost, value)
 
 class AshesKeySortedSetValue(
         override val key: String,
         override val type: String,
         override val ttl: Long,
         override val cost: Long,
-        override val value: List<Pair<Double, String>>): AshesKeyValue(key, type, ttl, cost, value)
+        override val value: ObservableList<Pair<Double, String>>): AshesKeyValue(key, type, ttl, cost, value)

@@ -3,7 +3,7 @@ package io.github.tzxyz.ashes.controllers
 import io.github.tzxyz.ashes.global.Current
 import io.github.tzxyz.ashes.models.*
 import io.github.tzxyz.ashes.redis.AshesRedisClientFactory
-import tornadofx.observable
+import tornadofx.asObservable
 
 class AshesKeyController: AshesBaseController() {
 
@@ -24,26 +24,26 @@ class AshesKeyController: AshesBaseController() {
                 val length = client().llen(key)
                 val result = client().lrange(key, 0, length)
                 val cost = System.currentTimeMillis() - now
-                return AshesKeyListValue(key, type, ttl, cost, result.observable())
+                return AshesKeyListValue(key, type, ttl, cost, result.asObservable())
             }
             "hash" -> {
                 val now = System.currentTimeMillis()
                 val result = client().hgetAll(key).toList()
                 val cost = System.currentTimeMillis() - now
-                return AshesKeyHashValue(key, type, ttl, cost, result.observable())
+                return AshesKeyHashValue(key, type, ttl, cost, result.asObservable())
             }
             "set" -> {
                 val now = System.currentTimeMillis()
                 val cost = System.currentTimeMillis() - now
                 val set = client().smembers(key)
-                return AshesKeySetValue(key, type, ttl, cost, (0.. set.size).toList().zip(set))
+                return AshesKeySetValue(key, type, ttl, cost, set.toList().asObservable())
             }
             "zset" -> {
                 val now = System.currentTimeMillis()
                 val cost = System.currentTimeMillis() - now
                 val sortedSet = client().zrangeWithScores(key, 0, -1)
                 val values = sortedSet.map { Pair(it.score, it.element) }
-                return AshesKeySortedSetValue(key, type, ttl, cost, values)
+                return AshesKeySortedSetValue(key, type, ttl, cost, values.asObservable())
             }
             else -> {
                 throw RuntimeException("unknown redis value type {}.".format(type))

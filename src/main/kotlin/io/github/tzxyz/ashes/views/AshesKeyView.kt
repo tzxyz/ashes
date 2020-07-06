@@ -252,7 +252,7 @@ class AshesListKeyView(override val keyAndValue: AshesKeyListValue): AshesBaseKe
 
     override fun contentView() = vbox {
         vgrow = Priority.ALWAYS
-        tableview(keyAndValue.value.mapIndexed { index, s -> index to s } .observable()) {
+        tableview(keyAndValue.value.mapIndexed { index, s -> index to s }.asObservable()) {
             vgrow = Priority.ALWAYS
             readonlyColumn("#", Pair<Int, String>::first)
             readonlyColumn("value", Pair<Int, String>::second)
@@ -299,9 +299,22 @@ class AshesSetKeyView(override val keyAndValue: AshesKeySetValue): AshesBaseKeyV
     override val root = buildView()
 
     override fun contentView() = vbox {
-        text("ashes set")
-        text("ashes set")
-        text("ashes set")
+        vgrow = Priority.ALWAYS
+        tableview(keyAndValue.value.mapIndexed { index, s -> index to s }.asObservable()) {
+            vgrow = Priority.ALWAYS
+            readonlyColumn("#", Pair<Int, String>::first)
+            readonlyColumn("value", Pair<Int, String>::second)
+            columnResizePolicy = SmartResize.POLICY
+            setRowFactory {
+                val row = TableRow<Pair<Int, String>>()
+                row.setOnMouseClicked { e ->
+                    if (e.clickCount == 2) {
+                        println(row.item)
+                    }
+                }
+                row
+            }
+        }
     }
 }
 
@@ -310,8 +323,21 @@ class AshesSortedSetKeyView(override val keyAndValue: AshesKeySortedSetValue): A
     override val root = buildView()
 
     override fun contentView() = vbox {
-        text("ashes sorted set")
-        text("ashes sorted set")
-        text("ashes sorted set")
+        vgrow = Priority.ALWAYS
+        tableview(keyAndValue.value) {
+            vgrow = Priority.ALWAYS
+            readonlyColumn("score", Pair<Double, String>::first)
+            readonlyColumn("value", Pair<Double, String>::second)
+            columnResizePolicy = SmartResize.POLICY
+            setRowFactory {
+                val row = TableRow<Pair<Double, String>>()
+                row.setOnMouseClicked { e ->
+                    if (e.clickCount == 2) {
+                        println(row.item)
+                    }
+                }
+                row
+            }
+        }
     }
 }
