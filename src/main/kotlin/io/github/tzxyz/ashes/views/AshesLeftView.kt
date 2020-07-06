@@ -13,6 +13,7 @@ import io.github.tzxyz.ashes.fragments.AshesNewKeyFragment
 import io.github.tzxyz.ashes.global.Current
 import io.github.tzxyz.ashes.models.AshesConnection
 import io.github.tzxyz.ashes.utils.DragResizer
+import javafx.scene.control.ButtonType
 import javafx.scene.control.TreeItem
 import tornadofx.*
 import java.util.concurrent.ConcurrentHashMap
@@ -124,9 +125,9 @@ class AshesLeftView : View() {
         item("Flush DB").action {
             confirmation(
                 header = "Flush DB on redis://${connection.host}:${connection.port}/${connection.db}\r\nThis operation can't be undone.",
-                actionFn = { buttonType ->
-                    when(buttonType.text) {
-                        "OK" -> {
+                actionFn = {
+                    when(it) {
+                        ButtonType.OK -> {
                             keyController.flushDB()
                             fire(AshesReloadKeysEvent(connection))
                         }

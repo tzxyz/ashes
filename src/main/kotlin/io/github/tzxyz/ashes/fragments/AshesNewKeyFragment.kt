@@ -7,7 +7,6 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.geometry.Pos
 import javafx.scene.control.TableView
-import javafx.scene.control.cell.TextFieldListCell
 import javafx.scene.layout.Priority
 import tornadofx.*
 
@@ -25,7 +24,7 @@ class AshesNewKeyFragment: AshesBaseFragment() {
             vgrow = Priority.ALWAYS
             fieldset("Key:") {
                 field {
-                    combobox(values = listOf(STRING, LIST, SET, ZSET, HASH)) {
+                    combobox(values = listOf(STRING, HASH, LIST, SET, ZSET)) {
                         id = "key-type"
                         hgrow = Priority.ALWAYS
                         bind(newKey.type)
@@ -58,14 +57,7 @@ class AshesNewKeyFragment: AshesBaseFragment() {
                                                 context.validators.forEach {
                                                     if (!it.validate()) return@action
                                                 }
-                                                when(newKey.type.value) {
-                                                    STRING -> keyController.set(newKey.key.value, newKey.stringValue.value)
-                                                    LIST -> keyController.rpush(newKey.key.value, newKey.listValue.value.map { it.value })
-                                                    SET -> keyController.sadd(newKey.key.value, newKey.setValue.value.toSet())
-                                                    ZSET -> keyController.zadd(newKey.key.value, newKey.setValue.value.toSet())
-                                                    HASH -> keyController.hmset(newKey.key.value, newKey.hashValue.value.map { it.key to it.value }.toMap())
-                                                    else -> throw RuntimeException("unknown redis key type")
-                                                }
+                                                keyController.set(newKey.key.value, newKey.stringValue.value)
                                                 close()
                                             }
                                         }
@@ -112,14 +104,7 @@ class AshesNewKeyFragment: AshesBaseFragment() {
                                                 context.validators.forEach {
                                                     if (!it.validate()) return@action
                                                 }
-                                                when(newKey.type.value) {
-                                                    STRING -> keyController.set(newKey.key.value, newKey.stringValue.value)
-                                                    LIST -> keyController.rpush(newKey.key.value, newKey.listValue.value.map { it.value })
-                                                    SET -> keyController.sadd(newKey.key.value, newKey.setValue.value.toSet())
-                                                    ZSET -> keyController.zadd(newKey.key.value, newKey.setValue.value.toSet())
-                                                    HASH -> keyController.hmset(newKey.key.value, newKey.hashValue.value.map { it.key to it.value }.toMap())
-                                                    else -> throw RuntimeException("unknown redis key type")
-                                                }
+                                                keyController.rpush(newKey.key.value, newKey.listValue.value.map { it.value })
                                                 close()
                                             }
                                         }
@@ -128,26 +113,89 @@ class AshesNewKeyFragment: AshesBaseFragment() {
                                 SET -> {
                                     container.addChildIfPossible(field {
                                         id = "new-key-value-view"
-                                        val values = FXCollections.observableArrayList<String>("New Value Here.")
-                                        newKey.setValue.value = values
-                                        listview(newKey.setValue) {
-                                            isEditable = true
+                                        newKey.setValue.value = FXCollections.observableArrayList<AshesNewSetValue>()
+                                        tableview(newKey.setValue) {
+                                            id = "setTableView"
                                             prefHeight = 300.0
-                                            cellFactory = TextFieldListCell.forListView()
+                                            columnResizePolicy = SmartResize.POLICY
+                                            column("value", AshesNewSetValue::value).makeEditable()
+                                            context.addValidator(this, this.itemsProperty()) {
+                                                if (it.isNullOrEmpty()) error("The value is required.")
+                                                else null
+                                            }
                                         }
                                     }, 1)
+                                    container.addChildIfPossible(field {
+                                        id = "new-key-value-operator-bar"
+                                        hbox {
+                                            alignment = Pos.BASELINE_RIGHT
+                                            spacing = 12.0
+                                            button("Add Item", SVGIcon(CANCEL_BUTTON, color = c("d81e06"), size = 14)).action {
+                                                val setTableView = (this@vbox.lookup("#setTableView") as TableView<AshesNewSetValue>)
+                                                val row = setTableView.items.size
+                                                setTableView.items.add(AshesNewSetValue(""))
+                                                setTableView.layout()
+                                                setTableView.edit(row, setTableView.columns[0])
+
+                                            }
+                                            button("Remove Item", SVGIcon(CANCEL_BUTTON, color = c("d81e06"), size = 14)).action {
+                                                val setTableView = (this@vbox.lookup("#setTableView") as TableView<AshesNewSetValue>)
+                                                setTableView.selectedItem?.let { setTableView.items.remove(it) }
+                                            }
+                                            button("Cancel", SVGIcon(CANCEL_BUTTON, color = c("d81e06"), size = 14)).action{ close() }
+                                            button("Save", SVGIcon(SAVE_BUTTON, color = c("1296db"), size = 14)).action {
+                                                context.validators.forEach {
+                                                    if (!it.validate()) return@action
+                                                }
+                                                keyController.sadd(newKey.key.value, newKey.setValue.value.map { it.value }.toSet())
+                                                close()
+                                            }
+                                        }
+                                    }, 2)
                                 }
                                 ZSET -> {
                                     container.addChildIfPossible(field {
                                         id = "new-key-value-view"
-                                        val values = FXCollections.observableArrayList<String>("New Value Here.")
-                                        newKey.setValue.value = values
-                                        listview(newKey.setValue) {
-                                            isEditable = true
+                                        val values = FXCollections.observableArrayList<AshesNewZSetValue>()
+                                        newKey.zsetValue.set(values)
+                                        tableview(values) {
+                                            id = "zSetTableView"
                                             prefHeight = 300.0
-                                            cellFactory = TextFieldListCell.forListView()
+                                            column("score", AshesNewZSetValue::score).makeEditable()
+                                            column("value", AshesNewZSetValue::value).makeEditable()
+                                            columnResizePolicy = SmartResize.POLICY
+                                            context.addValidator(this, this.itemsProperty()) {
+                                                if (it.isNullOrEmpty()) error("The value is required.")
+                                                else null
+                                            }
                                         }
                                     }, 1)
+                                    container.addChildIfPossible(field {
+                                        id = "new-key-value-operator-bar"
+                                        hbox {
+                                            alignment = Pos.BASELINE_RIGHT
+                                            spacing = 12.0
+                                            button("Add Item", svgicon(ADD_BUTTON, color = c("1296db"), size = 14)).action {
+                                                val zSetTableView = (this@vbox.lookup("#zSetTableView") as TableView<AshesNewZSetValue>)
+                                                val row = zSetTableView.items.size
+                                                zSetTableView.items.add(AshesNewZSetValue("", 0.0))
+                                                zSetTableView.layout()
+                                                zSetTableView.edit(row, zSetTableView.columns[0])
+                                            }
+                                            button("Remove Item", SVGIcon(CANCEL_BUTTON, color = c("d81e06"), size = 14)).action {
+                                                val zSetTableView = (this@vbox.lookup("#zSetTableView") as TableView<AshesNewZSetValue>)
+                                                zSetTableView.selectedItem?.let { zSetTableView.items.remove(it) }
+                                            }
+                                            button("Cancel", SVGIcon(CANCEL_BUTTON, color = c("d81e06"), size = 14)).action{ close() }
+                                            button("Save", SVGIcon(SAVE_BUTTON, color = c("1296db"), size = 14)).action {
+                                                context.validators.forEach {
+                                                    if (!it.validate()) return@action
+                                                }
+                                                keyController.zadd(newKey.key.value, newKey.zsetValue.value.map { it.value to it.score }.toMap())
+                                                close()
+                                            }
+                                        }
+                                    }, 2)
                                 }
                                 HASH -> {
                                     container.addChildIfPossible(field {
@@ -225,14 +273,7 @@ class AshesNewKeyFragment: AshesBaseFragment() {
                             context.validators.forEach {
                                 if (!it.validate()) return@action
                             }
-                            when(newKey.type.value) {
-                                STRING -> keyController.set(newKey.key.value, newKey.stringValue.value)
-                                LIST -> keyController.rpush(newKey.key.value, newKey.listValue.map { it.value })
-                                SET -> keyController.sadd(newKey.key.value, newKey.setValue.value.toSet())
-                                ZSET -> keyController.zadd(newKey.key.value, newKey.setValue.value.toSet())
-                                HASH -> keyController.hmset(newKey.key.value, newKey.hashValue.value.map { it.key to it.value }.toMap())
-                                else -> throw RuntimeException("unknown redis key type")
-                            }
+                            keyController.set(newKey.key.value, newKey.stringValue.value)
                             close()
                         }
                     }
@@ -248,10 +289,12 @@ class AshesNewKey {
     val type = SimpleStringProperty()
     val stringValue = SimpleStringProperty()
     val listValue = SimpleListProperty<AshesNewListValue>()
-    val setValue = SimpleListProperty<String>()
-    val zsetValue = SimpleListProperty<Pair<Double, String>>()
+    val setValue = SimpleListProperty<AshesNewSetValue>()
+    val zsetValue = SimpleListProperty<AshesNewZSetValue>()
     val hashValue = SimpleListProperty<AshesNewHashValue>()
 }
 
 data class AshesNewListValue(var value: String)
+data class AshesNewSetValue(var value: String)
+data class AshesNewZSetValue(var value: String, var score: Double)
 data class AshesNewHashValue(var key: String, var value: String)

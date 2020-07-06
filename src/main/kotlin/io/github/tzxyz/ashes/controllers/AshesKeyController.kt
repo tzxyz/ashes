@@ -64,8 +64,8 @@ class AshesKeyController: AshesBaseController() {
         client().sadd(key, *value.toTypedArray())
     }
 
-    fun zadd(key: String, value: Set<String>) {
-        //client().zadd(key, *value.toTypedArray())
+    fun zadd(key: String, value: Map<String, Double>) {
+        client().zadd(key, value)
     }
 
     fun hmset(key: String, value: Map<String, String>) {
