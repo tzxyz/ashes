@@ -134,8 +134,8 @@ class AshesLeftView : View() {
         item("New Key").action {
             find<AshesNewKeyFragment>().openModal()
         }
-        item("Open Console").action { fire(AshesOpenKeyViewEvent(OPEN_CONSOLE_VIEW)) }
-        item("Server Info").action { fire(AshesOpenKeyViewEvent(KEY_CONSTANTS_SERVER_INFO)) }
+        item("Open Console").action { fire(AshesOpenKeyViewEvent(OPEN_CONSOLE_VIEW, connection)) }
+        item("Server Info").action { fire(AshesOpenKeyViewEvent(KEY_CONSTANTS_SERVER_INFO, connection)) }
         item("Flush DB").action {
             confirmation(
                 header = "Flush DB on redis://${connection.host}:${connection.port}/${connection.db}\r\nThis operation can't be undone.",

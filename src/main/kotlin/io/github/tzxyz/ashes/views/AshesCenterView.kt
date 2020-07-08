@@ -34,7 +34,7 @@ class AshesCenterView : AshesBaseView() {
                     OPEN_CONSOLE_VIEW -> {
                         val tab = tab("Console") {
                             graphic = JFXRippler(MaterialDesignIconView(MaterialDesignIcon.CONSOLE, "1.4em"))
-                            add(AshesConsoleView())
+                            add(AshesConsoleView(e.connection))
                         }
                         selectionModel.select(tab)
                     }

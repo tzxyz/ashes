@@ -14,6 +14,6 @@ data class AshesScanKeyEvent(val connection: AshesConnection, val keys: List<Str
 
 data class AshesSendCommandEvent(val cmd: String): FXEvent(BackgroundThread)
 
-data class AshesOpenKeyViewEvent(val key: String): FXEvent()
+data class AshesOpenKeyViewEvent(val key: String, val connection: AshesConnection? = null): FXEvent()
 
 data class AshesReloadKeysEvent(val connection: AshesConnection): FXEvent()

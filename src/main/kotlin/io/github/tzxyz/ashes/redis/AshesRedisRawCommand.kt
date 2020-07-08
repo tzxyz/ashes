@@ -13,7 +13,7 @@ data class AshesRedisRawCommand(val input: String) {
 
     private val codec = StringCodec.UTF8
 
-    private val array = input.split("\\s+".toRegex())
+    private val array = input.split("\\s+".toRegex()).filter { it.isNotEmpty() }
 
     fun type(): CommandType {
         return CommandType.valueOf(array[0].toUpperCase())
