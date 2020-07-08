@@ -8,6 +8,8 @@ data class AshesNewConnectionEvent(val connection: AshesConnection): FXEvent(Bac
 
 data class AshesUpdateConnectionEvent(val before: AshesConnection, val connection: AshesConnection): FXEvent()
 
+data class AshesRemoveConnectionEvent(val connection: AshesConnection): FXEvent()
+
 data class AshesScanKeyEvent(val connection: AshesConnection, val keys: List<String>): FXEvent()
 
 data class AshesSendCommandEvent(val cmd: String): FXEvent(BackgroundThread)

@@ -1,6 +1,7 @@
 package io.github.tzxyz.ashes.controllers
 
 import io.github.tzxyz.ashes.events.AshesNewConnectionEvent
+import io.github.tzxyz.ashes.events.AshesRemoveConnectionEvent
 import io.github.tzxyz.ashes.events.AshesScanKeyEvent
 import io.github.tzxyz.ashes.events.AshesUpdateConnectionEvent
 import io.github.tzxyz.ashes.global.Current
@@ -35,6 +36,16 @@ class AshesConnectionController: AshesBaseController() {
             fire(AshesUpdateConnectionEvent(before, update))
         }
         return update
+    }
+
+    fun remove(connection: AshesConnection) {
+        with(config) {
+            val connections = JsonUtils.fromJsonString<List<AshesConnection>>(config.string("connections", "[]")).toMutableList()
+            connections.remove(connection)
+            set("connections", JsonUtils.toJsonString(connections))
+            save()
+            fire(AshesRemoveConnectionEvent(connection))
+        }
     }
 
     fun test(connection: AshesConnection): List<Pair<String, String>> {

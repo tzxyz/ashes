@@ -73,6 +73,14 @@ class AshesLeftView : View() {
                 }
             }
         }
+        subscribe<AshesRemoveConnectionEvent> { e ->
+            root.children.forEach { item ->
+                if (e.connection == item.value) {
+                    root.children.remove(item)
+                    return@subscribe
+                }
+            }
+        }
         subscribe<AshesScanKeyEvent> { e ->
             runAsync {
                 root.children.find { it.value == e.connection }.let {
@@ -112,6 +120,12 @@ class AshesLeftView : View() {
             graphic = JFXRippler(MaterialDesignIconView(MaterialDesignIcon.TABLE_EDIT, "1.4em"))
             action {
                 find<AshesEditConnectionFragment>(AshesEditConnectionFragment::current to connection).openModal()
+            }
+        }
+        item("Remove Connection") {
+            graphic = JFXRippler(MaterialDesignIconView(MaterialDesignIcon.DELETE, "1.4em"))
+            action {
+                connectionController.remove(connection)
             }
         }
         item("Reload").action {
