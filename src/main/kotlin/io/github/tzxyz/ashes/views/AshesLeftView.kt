@@ -12,6 +12,7 @@ import io.github.tzxyz.ashes.fragments.AshesEditConnectionFragment
 import io.github.tzxyz.ashes.fragments.AshesNewKeyFragment
 import io.github.tzxyz.ashes.global.Current
 import io.github.tzxyz.ashes.models.AshesConnection
+import io.github.tzxyz.ashes.models.AshesKey
 import io.github.tzxyz.ashes.utils.DragResizer
 import javafx.scene.control.ButtonType
 import javafx.scene.control.TreeItem
@@ -46,14 +47,14 @@ class AshesLeftView : View() {
                         Current.setConnection(it)
                     }
                 }
-                is String -> {
-                    text = it
+                is AshesKey -> {
+                    text = it.key
                     addClass("ashes-key")
                     graphic = keyIcon()
                     contextMenu = null
                     setOnMouseClicked { e ->
                         if (e.clickCount == 2) {
-                            fire(AshesOpenKeyViewEvent(selectedValue!! as String))
+                            fire(AshesOpenKeyViewEvent(it.key, it.connection))
                         }
                     }
                 }
@@ -86,7 +87,7 @@ class AshesLeftView : View() {
                 root.children.find { it.value == e.connection }.let {
                     if (!loadedConnections.containsKey(e.connection)) {
                         e.keys.forEach { key ->
-                            it?.children?.add(TreeItem(key))
+                            it?.children?.add(TreeItem(AshesKey(key, e.connection)))
                         }
                         loadedConnections[e.connection] = true
                         it?.expandAll()
