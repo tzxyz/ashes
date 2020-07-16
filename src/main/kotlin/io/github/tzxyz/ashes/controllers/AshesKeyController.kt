@@ -1,5 +1,6 @@
 package io.github.tzxyz.ashes.controllers
 
+import io.github.tzxyz.ashes.fragments.AshesNewKey
 import io.github.tzxyz.ashes.global.Current
 import io.github.tzxyz.ashes.models.*
 import io.github.tzxyz.ashes.redis.AshesRedisClientFactory
@@ -54,6 +55,11 @@ class AshesKeyController: AshesBaseController() {
     fun set(key: String, value: String): AshesKeyValue {
         client().set(key, value)
         return getKeyAndValue(key)
+    }
+
+    fun set(ashesKey: AshesNewKey) {
+        client().set(ashesKey.key.value, ashesKey.stringValue.value)
+        client().expire(ashesKey.key.value, ashesKey.ttl.value)
     }
 
     fun rpush(key: String, value: List<String>) {
